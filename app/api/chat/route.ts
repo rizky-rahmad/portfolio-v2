@@ -3,6 +3,9 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 import { NextResponse } from "next/server";
 import "dotenv/config"
 
+
+export const runtime = "edge";
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const safetySettings = [
