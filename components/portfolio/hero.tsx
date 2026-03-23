@@ -2,8 +2,14 @@
 
 import { motion } from "framer-motion"
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function Hero() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true) 
+  }, [])
+
   const handleScrollToAbout = () => {
     const element = document.getElementById("about")
     if (element) {
@@ -44,13 +50,13 @@ export function Hero() {
 
       {/* Floating particles */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
+        {mounted && [...Array(50)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary/30 rounded-full"
             initial={{
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+              x: Math.random() * window.innerWidth, // Sekarang aman menggunakan window
+              y: Math.random() * window.innerHeight,
             }}
             animate={{
               y: [null, Math.random() * -500],
