@@ -1,8 +1,10 @@
 // app/api/chat/route.ts
+export const runtime = "edge";
+
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
