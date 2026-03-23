@@ -1,8 +1,6 @@
 // app/api/chat/route.ts
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { NextResponse } from "next/server";
-import "dotenv/config"
-
 
 export const runtime = "edge";
 
