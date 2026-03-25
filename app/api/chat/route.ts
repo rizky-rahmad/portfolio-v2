@@ -1,10 +1,12 @@
 // app/api/chat/route.ts
 export const runtime = "edge";
 
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
 import { NextResponse } from "next/server";
-
-
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
@@ -26,12 +28,13 @@ async function getResumeContext() {
 
   // URL ini akan secara otomatis mengunduh/mengekstrak dokumen dalam format Plain Text (.txt)
   const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=txt`;
-  
+
   try {
     // Next.js akan men-cache hasil fetch ini secara otomatis (bisa diatur revalidate-nya jika perlu)
     const response = await fetch(exportUrl, { next: { revalidate: 3600 } }); // Cache selama 1 jam
-    if (!response.ok) throw new Error("Gagal mengambil dokumen dari Google Drive");
-    
+    if (!response.ok)
+      throw new Error("Gagal mengambil dokumen dari Google Drive");
+
     const text = await response.text();
     return text;
   } catch (error) {
@@ -45,19 +48,24 @@ export async function POST(request: Request) {
     const { message } = await request.json();
 
     if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Message is required" },
+        { status: 400 }
+      );
     }
 
     // 1. Ambil dokumen dari Google Drive terlebih dahulu
     const resumeContext = await getResumeContext();
 
     if (!resumeContext) {
-        return NextResponse.json({ response: "Maaf, saat ini saya tidak dapat mengakses data dokumen." });
+      return NextResponse.json({
+        response: "Maaf, saat ini saya tidak dapat mengakses data dokumen.",
+      });
     }
 
-    const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
-        safetySettings
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      safetySettings,
     });
 
     // 2. Masukkan dokumen yang di-fetch ke dalam System Prompt
@@ -90,9 +98,11 @@ Visitor's Question: ${message}
     const text = response.text();
 
     return NextResponse.json({ response: text });
-
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

@@ -16,7 +16,7 @@ const socialLinks = [
   },
   {
     icon: Instagram,
-    href: "https://instagram.com/rahmad.rizki",
+    href: "https://www.instagram.com/rrizki912/",
     label: "Instagram",
   },
   {
@@ -150,7 +150,7 @@ export function Footer() {
         <div className="py-6 border-t border-border">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              © {new Date().getFullYear()} Rahmad Rizki. Built with
+              © 2024 - {new Date().getFullYear()} Rahmad Rizki. Built with
               <Heart className="w-4 h-4 text-primary inline" />
               using Next.js & Tailwind CSS.
             </p>
