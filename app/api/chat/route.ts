@@ -21,25 +21,35 @@ const safetySettings = [
   },
 ];
 
-// Fungsi untuk mengambil teks dari Google Docs
-async function getResumeContext() {
+// Fungsi untuk mengambil dokumen dari Google Docs sebagai PDF
+async function getResumeContextPdf() {
   const docId = process.env.GOOGLE_DOC_ID;
   if (!docId) throw new Error("GOOGLE_DOC_ID is not defined");
 
-  // URL ini akan secara otomatis mengunduh/mengekstrak dokumen dalam format Plain Text (.txt)
-  const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=txt`;
+  // Ubah format menjadi 'pdf' agar gambar sertifikat tetap dipertahankan
+  const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
 
   try {
-    // Next.js akan men-cache hasil fetch ini secara otomatis (bisa diatur revalidate-nya jika perlu)
-    const response = await fetch(exportUrl, { next: { revalidate: 3600 } }); // Cache selama 1 jam
+    const response = await fetch(exportUrl, { next: { revalidate: 3600 } });
     if (!response.ok)
       throw new Error("Gagal mengambil dokumen dari Google Drive");
 
-    const text = await response.text();
-    return text;
+    // Ambil data dalam bentuk buffer
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Konversi ke format Base64 yang dibutuhkan oleh Gemini
+    const base64Data = Buffer.from(arrayBuffer).toString("base64");
+
+    // Kembalikan objek inlineData untuk API Gemini
+    return {
+      inlineData: {
+        data: base64Data,
+        mimeType: "application/pdf",
+      },
+    };
   } catch (error) {
     console.error("Error fetching doc:", error);
-    return ""; // Kembalikan string kosong jika gagal, atau handle error sesuai kebutuhan
+    return null;
   }
 }
 
@@ -54,10 +64,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Ambil dokumen dari Google Drive terlebih dahulu
-    const resumeContext = await getResumeContext();
+    // 1. Ambil PDF dari Google Drive
+    const pdfPart = await getResumeContextPdf();
 
-    if (!resumeContext) {
+    if (!pdfPart) {
       return NextResponse.json({
         response: "Maaf, saat ini saya tidak dapat mengakses data dokumen.",
       });
@@ -68,21 +78,18 @@ export async function POST(request: Request) {
       safetySettings,
     });
 
-    // 2. Masukkan dokumen yang di-fetch ke dalam System Prompt
+    // 2. Sesuaikan System Prompt untuk memberitahu bahwa referensinya adalah file terlampir
     const systemPrompt = `
 You are a highly polite, professional, and helpful personal AI assistant for Rahmad Rizki. 
-Your task is to answer questions from visitors to Rahmad Rizki's portfolio website regarding his background, skills, and experience.
+Your task is to answer questions from visitors to Rahmad Rizki's portfolio website regarding his background, skills, experience, and the certificates he has achieved.
 
-Use the following knowledge data as your ONLY reference:
-----------------------------------------------------------------------------------
-${resumeContext}
-----------------------------------------------------------------------------------
+Use the attached PDF document as your ONLY reference. This document contains Rizki's text data as well as images of his certificates. You must analyze BOTH the text and the visual contents (images/certificates) to answer the visitor's question.
 
 STRICT RULES FOR ANSWERING:
-1. ONLY answer based on the information provided in the knowledge data above.
-2. If the information is NOT in the data, reply politely: "I'm sorry, I don't have that specific detail in my records about Rizki. You can contact him directly via email or WhatsApp." (Translate this to Indonesian if the user asks in Indonesian).
+1. ONLY answer based on the information provided in the attached PDF document. If it's in an image/certificate, you can read and use that information.
+2. If the information is NOT in the document, reply politely: "I'm sorry, I don't have that specific detail in my records about Rizki. You can contact him directly via email or WhatsApp." (Translate this to Indonesian if the user asks in Indonesian).
 3. NO HALLUCINATIONS. Never make up information.
-4. Never mention "Google Drive", "Document", or source file names. Just refer to it as "Rizki's data".
+4. Never mention "Google Drive", "Document", "PDF", or source file names. Just refer to it as "Rizki's data".
 5. LANGUAGE: Your default language is ENGLISH. However, if the visitor's question is in INDONESIAN, you MUST reply entirely in INDONESIAN. Match the user's language.
 6. FORMATTING & READABILITY: 
    - ALWAYS use clear paragraphs with line breaks (empty lines) between them.
@@ -93,7 +100,8 @@ STRICT RULES FOR ANSWERING:
 Visitor's Question: ${message}
 `;
 
-    const result = await model.generateContent(systemPrompt);
+    // 3. Kirimkan teks prompt dan file PDF secara bersamaan ke Gemini
+    const result = await model.generateContent([systemPrompt, pdfPart]);
     const response = result.response;
     const text = response.text();
 
