@@ -8,7 +8,21 @@ import {
 } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL || "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN || "",
+});
+
+const ratelimit = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(15, "1 m"),
+  analytics: true,
+});
 
 const safetySettings = [
   {
@@ -26,21 +40,32 @@ async function getResumeContextPdf() {
   const docId = process.env.GOOGLE_DOC_ID;
   if (!docId) throw new Error("GOOGLE_DOC_ID is not defined");
 
-  // Ubah format menjadi 'pdf' agar gambar sertifikat tetap dipertahankan
-  const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
+  const cacheKey = `resume_pdf_cache_${docId}`;
+  // // Ubah format menjadi 'pdf' agar gambar sertifikat tetap dipertahankan
 
   try {
+    const cachedPDFBase64 = await redis.get<string>(cacheKey);
+
+    if (cachedPDFBase64) {
+      console.log("Get pdf from redis upstash cache");
+      return {
+        inlineData: {
+          data: cachedPDFBase64,
+          mimeType: "application/pdf",
+        },
+      };
+    }
+
+    console.log("PDF downloaded from google drive");
+    const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
     const response = await fetch(exportUrl, { next: { revalidate: 3600 } });
-    if (!response.ok)
-      throw new Error("Gagal mengambil dokumen dari Google Drive");
+    if (!response.ok) throw new Error("Failed to fetch PDF");
 
-    // Ambil data dalam bentuk buffer
     const arrayBuffer = await response.arrayBuffer();
-
-    // Konversi ke format Base64 yang dibutuhkan oleh Gemini
     const base64Data = Buffer.from(arrayBuffer).toString("base64");
 
-    // Kembalikan objek inlineData untuk API Gemini
+    await redis.set(cacheKey, base64Data, { ex: 3600 });
+
     return {
       inlineData: {
         data: base64Data,
@@ -55,6 +80,19 @@ async function getResumeContextPdf() {
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("cf-connecting-ip") || "anonymous";
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return NextResponse.json(
+        {
+          response:
+            "You already ask 15 questions in a minute, please wait 60 seconds!",
+        },
+        { status: 429, statusText: "Too Many Requests" }
+      );
+    }
+
     const { message } = await request.json();
 
     if (!message) {
