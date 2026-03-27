@@ -8,6 +8,7 @@ import { Experience } from "@/components/portfolio/experience"
 import { Projects } from "@/components/portfolio/projects"
 import { Contact } from "@/components/portfolio/contact"
 import { Footer } from "@/components/portfolio/footer"
+import { Certifications } from "@/components/portfolio/certifications";
 
 
 
@@ -19,6 +20,7 @@ export default function PortfolioPage() {
       <About />
       <Education />
       <Experience />
+      <Certifications />
       <Projects />
       <Contact />
       <Footer />
