@@ -24,7 +24,7 @@ const skills = [
   {
     category: "AI & Tools",
     icon: Cpu,
-    items: ["OpenAI GPT-4", "Google Gemini", "Azure OpenAI", "Prompt Engineering", "LLM Integration"],
+    items: ["OpenAI GPT-4", "Google Gemini", "Azure Cognitive Services", "Prompt Engineering", "LLM Integration"],
   },
 ]
 
@@ -105,7 +105,7 @@ export function About() {
                 I am a result-oriented Full Stack Developer with hands-on experience delivering functional web solutions for institutional clients using both <span className="text-foreground font-medium">Agile and Waterfall methodologies</span>. My expertise spans building robust backend systems with <span className="text-foreground font-medium">Node.js and Express.js</span>, creating responsive frontends with <span className="text-foreground font-medium">React and Next.js</span>, and managing efficient databases with <span className="text-foreground font-medium">PostgreSQL and Redis</span>.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                I am proficient in leveraging AI tools like <span className="text-foreground font-medium">GPT-4 and Gemini</span> to optimize development workflows and actively participate in AI-integrated hackathons to drive innovation.
+                As a <span className="text-foreground font-medium">Microsoft Certified Azure AI Professional</span>, I am proficient in leveraging tools like <span className="text-foreground font-medium">GPT-4, Gemini, and Azure Cognitive Services</span> to optimize development workflows and actively participate in AI-integrated hackathons to drive innovation.
               </p>
 
               {/* Bio Info Grid */}
