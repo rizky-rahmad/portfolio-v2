@@ -20,10 +20,10 @@ const featuredCertification = {
 // Other Certifications / Webinars
 const otherCertifications = [
   {
-    title: "Fullstack Web Development Bootcamp",
-    issuer: "Udemy",
-    date: "2025",
-    image: "/images/certificates/sertifikat_udemy.jpg",
+    title: "AI Productivity and AI API Integration for Developers",
+    issuer: "Hacktiv8",
+    date: "2026",
+    image: "/images/certificates/gen-ai-hacktiv8.jpg",
   },
   {
     title: "From Code to Cloud: Building and Deploying REST APIs with Google Cloud",
@@ -31,6 +31,13 @@ const otherCertifications = [
     date: "2026",
     image: "/images/certificates/Sertifikat_Tech_Talk_2.jpg",
   },
+  {
+    title: "Fullstack Web Development Bootcamp",
+    issuer: "Udemy",
+    date: "2025",
+    image: "/images/certificates/sertifikat_udemy.jpg",
+  },
+  
 ]
 
 export function Certifications() {
