@@ -20,12 +20,16 @@ export function Navbar() {
   const [activeSection, setActiveSection] = useState("")
 
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false
+
+    // Batch DOM reads into one rAF callback per frame to avoid layout
+    // thrashing / forced reflows on every scroll event (a TBT contributor).
+    const update = () => {
+      ticking = false
       setIsScrolled(window.scrollY > 50)
 
-      // Update active section based on scroll position
-      const sections = navLinks.map(link => link.href.substring(1))
       const scrollPosition = window.scrollY + 100
+      const sections = navLinks.map(link => link.href.substring(1))
 
       for (const section of sections.reverse()) {
         const element = document.getElementById(section)
@@ -36,7 +40,14 @@ export function Navbar() {
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 

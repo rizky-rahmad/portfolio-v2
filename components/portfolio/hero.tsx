@@ -3,14 +3,16 @@
 import { m } from "framer-motion"
 import Image from "next/image"
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react"
-import { useState, useEffect } from "react"
+
+// Deterministic positions so SSR and client markup match (no hydration mismatch),
+// animated purely via CSS on the compositor thread.
+const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
+  left: (i * 8.3 + 4) % 100,
+  duration: 12 + (i % 5) * 3,
+  delay: (i % 6) * 1.6,
+}))
 
 export function Hero() {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const handleScrollToAbout = () => {
     const element = document.getElementById("about")
     if (element) {
@@ -23,7 +25,7 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero-bg.jpg"
+          src="/images/hero-bg.webp"
           alt=""
           fill
           priority
@@ -50,24 +52,16 @@ export function Hero() {
         />
       </div>
 
-      {/* Floating particles */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {mounted && [...Array(12)].map((_, i) => (
-          <m.div
+      {/* Floating particles (CSS-only, compositor-driven) */}
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+        {PARTICLES.map((p, i) => (
+          <span
             key={i}
-            className="absolute w-1 h-1 bg-primary/30 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth, // Sekarang aman menggunakan window
-              y: Math.random() * window.innerHeight,
-            }}
-            animate={{
-              y: [null, Math.random() * -500],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              ease: "linear",
+            className="particle"
+            style={{
+              left: `${p.left}%`,
+              animationDuration: `${p.duration}s`,
+              animationDelay: `${p.delay}s`,
             }}
           />
         ))}
