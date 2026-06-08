@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ExternalLink, Github, Layers, ArrowRight } from "lucide-react";
@@ -104,7 +104,7 @@ export function Projects() {
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -120,14 +120,14 @@ export function Projects() {
             A selection of production-ready projects showcasing full-stack
             development expertise and real-world problem solving.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Featured Projects */}
         <div className="space-y-8 mb-20">
           {featuredProjects
             .filter((p) => p.featured)
             .map((project, index) => (
-              <motion.div
+              <m.div
                 key={project.title}
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -145,6 +145,7 @@ export function Projects() {
                       src={project.image}
                       alt={project.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -231,12 +232,12 @@ export function Projects() {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
         </div>
 
         {/* Other Projects 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -251,7 +252,7 @@ export function Projects() {
             {featuredProjects
               .filter((p) => !p.featured)
               .map((project, index) => (
-                <motion.div
+                <m.div
                   key={project.title}
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -303,14 +304,14 @@ export function Projects() {
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
           </div>
-        </motion.div>
+        </m.div>
         */}
 
         {/* Portfolio Gallery */}
-        {/* <motion.div
+        {/* <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -330,7 +331,7 @@ export function Projects() {
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {portfolioProjects.map((project, index) => (
-              <motion.div
+              <m.div
                 key={project.title}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
@@ -354,10 +355,10 @@ export function Projects() {
                   <span className="text-xs text-primary font-medium mb-1">{project.category}</span>
                   <h4 className="text-sm font-bold text-foreground">{project.title}</h4>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div> */}
+        </m.div> */}
       </div>
     </section>
   );

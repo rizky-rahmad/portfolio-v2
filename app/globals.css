@@ -77,7 +77,7 @@
 
 @theme inline {
   --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -156,6 +156,29 @@
 /* Smooth image loading */
 img {
   content-visibility: auto;
+}
+
+/* Hero entrance animations (CSS-driven so the LCP text paints immediately,
+   without waiting for JavaScript/hydration) */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
 }
 
 /* Focus visible styles */

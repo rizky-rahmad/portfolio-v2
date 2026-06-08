@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import { Award, ExternalLink, Calendar, CheckCircle2, X, ZoomIn } from "lucide-react"
@@ -68,7 +68,7 @@ export function Certifications() {
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -83,10 +83,10 @@ export function Certifications() {
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
             Continuous learning and professional validations to stay ahead in the tech industry.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Featured Certification (Azure AI-900) */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -156,6 +156,7 @@ export function Certifications() {
                   src={featuredCertification.image}
                   alt={featuredCertification.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -166,10 +167,10 @@ export function Certifications() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Other Training & Webinars Grid */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -178,7 +179,7 @@ export function Certifications() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {otherCertifications.map((cert, index) => (
-              <motion.div
+              <m.div
                 key={cert.title}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -191,6 +192,7 @@ export function Certifications() {
                     src={cert.image}
                     alt={cert.title}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -208,23 +210,23 @@ export function Certifications() {
                     <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-md">{cert.date}</span>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* ---- MODAL POP-UP ---- */}
       <AnimatePresence>
         {selectedImage && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImage(null)}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 md:p-10 backdrop-blur-sm cursor-zoom-out"
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -246,13 +248,14 @@ export function Certifications() {
                   alt="Sertifikat Full View"
                   width={1600}
                   height={1200}
+                  sizes="(max-width: 768px) 100vw, 1280px"
                   className="object-contain max-w-full max-h-[85vh] rounded-lg"
-                  quality={100}
+                  quality={90}
                   priority
                 />
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </section>

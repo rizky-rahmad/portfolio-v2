@@ -1,18 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-// Import komponen Chatbot sudah ada di sini
-import { ChatbotWidget } from '@/components/chatbot/ChatBotWidget' 
+import { MotionProvider } from '@/components/lazy-motion-provider'
+import { LazyChatbot } from '@/components/chatbot/lazy-chatbot'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
+  display: 'swap',
   variable: '--font-inter'
-});
-
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ["latin"],
-  variable: '--font-jetbrains-mono'
 });
 
 export const metadata: Metadata = {
@@ -46,11 +42,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground`}>
-        {children}
+      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <MotionProvider>
+          {children}
+          {/* Chatbot dimuat lazy (client-only) agar tidak membebani initial load */}
+          <LazyChatbot />
+        </MotionProvider>
         <Analytics />
-        {/* Tambahkan widget chatbot di sini agar dirender di seluruh halaman */}
-        <ChatbotWidget />
       </body>
     </html>
   )

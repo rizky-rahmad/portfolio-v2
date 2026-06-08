@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
 import { MapPin, Phone, Mail, Calendar, Code2, Cpu, Database, Cloud } from "lucide-react"
@@ -73,7 +73,7 @@ export function About() {
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -88,11 +88,11 @@ export function About() {
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
             Result-oriented Full Stack Developer with a passion for building robust web solutions and integrating AI to optimize workflows.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Bio Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -111,7 +111,7 @@ export function About() {
               {/* Bio Info Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {bioInfo.map((info, index) => {
-                  const Component = info.href ? motion.a : motion.div
+                  const Component = info.href ? m.a : m.div
                   const linkProps = info.href ? {
                     href: info.href,
                     target: info.isExternal ? "_blank" : undefined,
@@ -141,7 +141,7 @@ export function About() {
             </div>
 
             {/* Interests */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.6 }}
@@ -158,11 +158,11 @@ export function About() {
                   </span>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Skills Grid */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -172,7 +172,7 @@ export function About() {
               Technical Expertise
             </h3>
             {skills.map((skillGroup, groupIndex) => (
-              <motion.div
+              <m.div
                 key={skillGroup.category}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -195,11 +195,11 @@ export function About() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             ))}
 
             {/* Methodologies */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.9 }}
@@ -216,8 +216,8 @@ export function About() {
                   </span>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </div>
     </section>

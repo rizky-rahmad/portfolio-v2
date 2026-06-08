@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   BotMessageSquare,
   X,
@@ -91,7 +91,7 @@ export function ChatbotWidget() {
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
@@ -196,12 +196,12 @@ export function ChatbotWidget() {
                 <SendHorizontal className="w-5 h-5" />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Floating Button (Sticky) */}
-      <motion.button
+      <m.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -210,7 +210,7 @@ export function ChatbotWidget() {
       >
         <MessageCircleQuestion className="w-6 h-6" />
         <span className="font-semibold text-sm">Ask Me</span>
-      </motion.button>
+      </m.button>
     </div>
   );
 }

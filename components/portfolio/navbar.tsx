@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -50,7 +50,7 @@ export function Navbar() {
 
   return (
     <>
-      <motion.header
+      <m.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -64,7 +64,7 @@ export function Navbar() {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 sm:h-20 items-center justify-between">
             {/* Logo */}
-            <motion.a
+            <m.a
               href="#"
               onClick={(e) => {
                 e.preventDefault()
@@ -84,12 +84,12 @@ export function Navbar() {
                 <span className="text-foreground font-semibold text-lg">Rahmad</span>
                 <span className="text-primary font-semibold text-lg">.</span>
               </div>
-            </motion.a>
+            </m.a>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link, index) => (
-                <motion.a
+                <m.a
                   key={link.href}
                   href={link.href}
                   onClick={(e) => {
@@ -108,19 +108,19 @@ export function Navbar() {
                 >
                   {link.label}
                   {activeSection === link.href.substring(1) && (
-                    <motion.div
+                    <m.div
                       layoutId="activeSection"
                       className="absolute inset-0 bg-primary/10 rounded-lg -z-10"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                </motion.a>
+                </m.a>
               ))}
             </div>
 
             {/* CTA Button */}
             <div className="hidden md:block">
-              <motion.a
+              <m.a
                 href="#contact"
                 onClick={(e) => {
                   e.preventDefault()
@@ -131,26 +131,26 @@ export function Navbar() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:bg-primary/90 transition-colors"
               >
                 {"Let's Talk"}
-              </motion.a>
+              </m.a>
             </div>
 
             {/* Mobile Menu Button */}
-            <motion.button
+            <m.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
+            </m.button>
           </div>
         </nav>
-      </motion.header>
+      </m.header>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -164,7 +164,7 @@ export function Navbar() {
             <nav className="relative pt-24 px-6">
               <div className="flex flex-col gap-2">
                 {navLinks.map((link, index) => (
-                  <motion.a
+                  <m.a
                     key={link.href}
                     href={link.href}
                     onClick={(e) => {
@@ -182,9 +182,9 @@ export function Navbar() {
                     )}
                   >
                     {link.label}
-                  </motion.a>
+                  </m.a>
                 ))}
-                <motion.a
+                <m.a
                   href="#contact"
                   onClick={(e) => {
                     e.preventDefault()
@@ -196,10 +196,10 @@ export function Navbar() {
                   className="mt-4 inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground rounded-lg font-medium text-lg"
                 >
                   {"Let's Talk"}
-                </motion.a>
+                </m.a>
               </div>
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

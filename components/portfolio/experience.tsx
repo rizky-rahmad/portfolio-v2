@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
 import { Briefcase, Calendar, MapPin, Building2, CheckCircle2 } from "lucide-react"
@@ -47,7 +47,7 @@ export function Experience() {
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -62,7 +62,7 @@ export function Experience() {
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
             A track record of delivering results and supporting institutional technology needs.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Experience Timeline */}
         <div className="relative max-w-4xl mx-auto">
@@ -70,7 +70,7 @@ export function Experience() {
           <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-border transform md:-translate-x-1/2 hidden md:block" />
 
           {experiences.map((exp, index) => (
-            <motion.div
+            <m.div
               key={`${exp.company}-${exp.period}`}
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -165,7 +165,7 @@ export function Experience() {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { Github, Linkedin, Instagram, Mail, Heart, ArrowUp } from "lucide-react"
 
 const socialLinks = [
@@ -81,7 +81,7 @@ export function Footer() {
               {/* Social Links */}
               <div className="flex items-center gap-3 mt-6">
                 {socialLinks.map((social) => (
-                  <motion.a
+                  <m.a
                     key={social.label}
                     href={social.href}
                     target="_blank"
@@ -92,7 +92,7 @@ export function Footer() {
                     aria-label={social.label}
                   >
                     <social.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </motion.a>
+                  </m.a>
                 ))}
               </div>
             </div>
@@ -156,7 +156,7 @@ export function Footer() {
             </p>
 
             {/* Back to Top */}
-            <motion.button
+            <m.button
               onClick={scrollToTop}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -164,7 +164,7 @@ export function Footer() {
             >
               <span>Back to Top</span>
               <ArrowUp className="w-4 h-4" />
-            </motion.button>
+            </m.button>
           </div>
         </div>
       </div>

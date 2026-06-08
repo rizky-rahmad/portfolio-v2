@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
 import { GraduationCap, Calendar, MapPin, Award, Lightbulb } from "lucide-react"
@@ -47,7 +47,7 @@ export function Education() {
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -62,12 +62,12 @@ export function Education() {
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
             Continuous learning and growth through formal education and hands-on hackathon experiences.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Education Timeline */}
           <div className="lg:col-span-2 space-y-6">
-            <motion.h3
+            <m.h3
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -75,14 +75,14 @@ export function Education() {
             >
               <GraduationCap className="w-6 h-6 text-primary" />
               Education
-            </motion.h3>
+            </m.h3>
 
             <div className="relative space-y-6">
               {/* Timeline line */}
               <div className="absolute left-4 top-8 bottom-8 w-px bg-border hidden sm:block" />
 
               {education.map((edu, index) => (
-                <motion.div
+                <m.div
                   key={edu.degree}
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -146,14 +146,14 @@ export function Education() {
                       ))}
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
 
           {/* Hackathons & Inventions */}
           <div className="space-y-6">
-            <motion.h3
+            <m.h3
               initial={{ opacity: 0, x: 20 }}
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -161,10 +161,10 @@ export function Education() {
             >
               <Lightbulb className="w-6 h-6 text-primary" />
               Inventions & Hackathons
-            </motion.h3>
+            </m.h3>
 
             {hackathons.map((hackathon, index) => (
-              <motion.div
+              <m.div
                 key={hackathon.title}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -192,11 +192,11 @@ export function Education() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
 
             {/* Languages */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.7 }}
@@ -210,7 +210,7 @@ export function Education() {
                     <span className="text-sm text-muted-foreground">Proficient</span>
                   </div>
                   <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                    <motion.div
+                    <m.div
                       initial={{ width: 0 }}
                       animate={isInView ? { width: "85%" } : {}}
                       transition={{ duration: 1, delay: 0.8 }}
@@ -224,7 +224,7 @@ export function Education() {
                     <span className="text-sm text-muted-foreground">Native</span>
                   </div>
                   <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                    <motion.div
+                    <m.div
                       initial={{ width: 0 }}
                       animate={isInView ? { width: "100%" } : {}}
                       transition={{ duration: 1, delay: 0.9 }}
@@ -233,7 +233,7 @@ export function Education() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>

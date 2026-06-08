@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { Mail, Phone, MapPin, Send, CheckCircle, Loader2 } from "lucide-react"
@@ -86,7 +86,7 @@ ${formData.message}`
 
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -101,11 +101,11 @@ ${formData.message}`
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
             {"Have a project in mind or want to discuss opportunities? I'd love to hear from you."}
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Contact Info */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -119,7 +119,7 @@ ${formData.message}`
 
             <div className="space-y-4 mb-10">
               {contactInfo.map((info, index) => (
-                <motion.a
+                <m.a
                   key={info.label}
                   href={info.href}
                   target="_blank"
@@ -138,12 +138,12 @@ ${formData.message}`
                       {info.value}
                     </p>
                   </div>
-                </motion.a>
+                </m.a>
               ))}
             </div>
 
             {/* Quick response note */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.6 }}
@@ -153,11 +153,11 @@ ${formData.message}`
               <p className="text-sm text-muted-foreground">
                 {"I typically respond within 24 hours. For urgent matters, feel free to reach out via WhatsApp."}
               </p>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Contact Form */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -168,7 +168,7 @@ ${formData.message}`
               </h3>
 
               {isSubmitted ? (
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex flex-col items-center justify-center py-12 text-center"
@@ -180,7 +180,7 @@ ${formData.message}`
                   <p className="text-muted-foreground">
                     {"Your message is ready. Complete sending it via WhatsApp."}
                   </p>
-                </motion.div>
+                </m.div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
@@ -248,7 +248,7 @@ ${formData.message}`
                     />
                   </div>
 
-                  <motion.button
+                  <m.button
                     type="submit"
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
@@ -266,11 +266,11 @@ ${formData.message}`
                         <span>Send via WhatsApp</span>
                       </>
                     )}
-                  </motion.button>
+                  </m.button>
                 </form>
               )}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

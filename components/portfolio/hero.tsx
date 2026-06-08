@@ -1,13 +1,14 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
+import Image from "next/image"
 import { ArrowDown, Github, Linkedin, Mail } from "lucide-react"
 import { useState, useEffect } from "react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
-    setMounted(true) 
+    setMounted(true)
   }, [])
 
   const handleScrollToAbout = () => {
@@ -21,12 +22,13 @@ export function Hero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-        {/* Replace this with your actual photo */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: "url('/images/hero-bg.jpg')",
-          }}
+        <Image
+          src="/images/hero-bg.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         {/* Dark overlay with opacity */}
         <div className="absolute inset-0 bg-background/70" />
@@ -36,7 +38,7 @@ export function Hero() {
 
       {/* Animated grid pattern */}
       <div className="absolute inset-0 z-0 opacity-20">
-        <div 
+        <div
           className="absolute inset-0"
           style={{
             backgroundImage: `
@@ -50,8 +52,8 @@ export function Hero() {
 
       {/* Floating particles */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {mounted && [...Array(50)].map((_, i) => (
-          <motion.div
+        {mounted && [...Array(12)].map((_, i) => (
+          <m.div
             key={i}
             className="absolute w-1 h-1 bg-primary/30 rounded-full"
             initial={{
@@ -73,12 +75,7 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-6"
-        >
+        <div className="mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -86,37 +83,30 @@ export function Hero() {
             </span>
             Available for new opportunities
           </span>
-        </motion.div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
+        <h1
+          className="animate-fade-up text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
         >
           <span className="text-foreground">{"Hi, I'm "}</span>
           <span className="text-primary">Rahmad Rizki</span>
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+        <p
+          className="animate-fade-up mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+          style={{ animationDelay: "0.2s" }}
         >
           <span className="text-foreground font-medium">Full Stack Web Developer</span> & <span className="text-foreground font-medium">AI Implementation Specialist</span>
           <br className="hidden sm:block" />
           <span className="text-base sm:text-lg md:text-xl">Building robust web solutions with modern technologies</span>
-        </motion.p>
+        </p>
 
         {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+        <div
+          className="animate-fade-up mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          style={{ animationDelay: "0.3s" }}
         >
-          <motion.a
+          <m.a
             href="#projects"
             onClick={(e) => {
               e.preventDefault()
@@ -127,8 +117,8 @@ export function Hero() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/25"
           >
             View My Work
-          </motion.a>
-          <motion.a
+          </m.a>
+          <m.a
             href="#contact"
             onClick={(e) => {
               e.preventDefault()
@@ -139,22 +129,20 @@ export function Hero() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold text-lg hover:bg-secondary/80 transition-all border border-border"
           >
             Get In Touch
-          </motion.a>
-        </motion.div>
+          </m.a>
+        </div>
 
         {/* Social Links */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="mt-12 flex items-center justify-center gap-4"
+        <div
+          className="animate-fade-up mt-12 flex items-center justify-center gap-4"
+          style={{ animationDelay: "0.4s" }}
         >
           {[
             { icon: Github, href: "https://github.com/rizky-rahmad", label: "GitHub" },
             { icon: Linkedin, href: "https://linkedin.com/in/rahmad-rizki-1728a6186", label: "LinkedIn" },
             { icon: Mail, href: "mailto:rizky.business7@gmail.com", label: "Email" },
           ].map((social) => (
-            <motion.a
+            <m.a
               key={social.label}
               href={social.href}
               target="_blank"
@@ -165,13 +153,13 @@ export function Hero() {
               aria-label={social.label}
             >
               <social.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-            </motion.a>
+            </m.a>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll Indicator */}
-      <motion.button
+      <m.button
         onClick={handleScrollToAbout}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -179,7 +167,7 @@ export function Hero() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 group"
         aria-label="Scroll to about section"
       >
-        <motion.div
+        <m.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
@@ -188,8 +176,8 @@ export function Hero() {
             Scroll Down
           </span>
           <ArrowDown className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-        </motion.div>
-      </motion.button>
+        </m.div>
+      </m.button>
     </section>
   )
 }

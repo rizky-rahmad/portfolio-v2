@@ -1,5 +1,3 @@
-export const runtime = "edge";
-
 import { Navbar } from "@/components/portfolio/navbar"
 import { Hero } from "@/components/portfolio/hero"
 import { About } from "@/components/portfolio/about"
