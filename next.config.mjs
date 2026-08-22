@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    // The two stylesheets blocked rendering for ~750ms, and the LCP breakdown
+    // was almost entirely "element render delay" waiting on them. Inlining puts
+    // ~21KB into each HTML response but removes a round trip from the critical
+    // path: measured FCP/LCP 1064ms -> 508ms on a throttled mobile profile.
+    inlineCss: true,
+  },
   typescript: {
     ignoreBuildErrors: false,
   },
