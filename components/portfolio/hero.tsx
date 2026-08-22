@@ -80,15 +80,15 @@ export function Hero() {
         </div>
 
         <h1
-          className="animate-fade-up text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
+          className="animate-rise text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
         >
           <span className="text-foreground">{"Hi, I'm "}</span>
           <span className="text-primary">Rahmad Rizki</span>
         </h1>
 
+        {/* Measured as the LCP element on mobile: no opacity fade, no delay. */}
         <p
-          className="animate-fade-up mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
-          style={{ animationDelay: "0.2s" }}
+          className="animate-rise mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
         >
           <span className="text-foreground font-medium">Full Stack Web Developer</span> & <span className="text-foreground font-medium">AI Implementation Specialist</span>
           <br className="hidden sm:block" />

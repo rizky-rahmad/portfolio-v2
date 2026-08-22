@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { MotionProvider } from '@/components/lazy-motion-provider'
 import { LazyChatbot } from '@/components/chatbot/lazy-chatbot'
@@ -48,7 +47,6 @@ export default function RootLayout({
           {/* Chatbot dimuat lazy (client-only) agar tidak membebani initial load */}
           <LazyChatbot />
         </MotionProvider>
-        <Analytics />
       </body>
     </html>
   )

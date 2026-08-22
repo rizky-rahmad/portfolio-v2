@@ -1,0 +1,14 @@
+# Cloudflare Pages reads this from the build output root. Without it, files in
+# public/ are served with `max-age=0, must-revalidate`, so every visit
+# re-validates images that have not changed.
+
+/images/*
+  # Not `immutable`: these paths are stable, so a replaced image would otherwise
+  # stay stale for the whole year. A month is the compromise.
+  Cache-Control: public, max-age=2592000
+
+/*.svg
+  Cache-Control: public, max-age=2592000
+
+/*.png
+  Cache-Control: public, max-age=2592000

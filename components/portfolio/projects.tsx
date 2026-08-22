@@ -157,6 +157,7 @@ export function Projects() {
                           href={project.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`Open the ${project.title} website`}
                           className="p-3 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                         >
                           <ExternalLink className="w-5 h-5" />
@@ -167,6 +168,7 @@ export function Projects() {
                           href={project.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`View the ${project.title} source on GitHub`}
                           className="p-3 rounded-full bg-card text-foreground hover:bg-secondary transition-colors"
                         >
                           <Github className="w-5 h-5" />

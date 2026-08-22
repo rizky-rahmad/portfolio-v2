@@ -1,0 +1,33 @@
+# Rahmad Rizki — Full Stack Web Developer & AI Implementation Specialist
+
+> Portfolio of Rahmad Rizki, a full stack web developer based in Central Jakarta,
+> Indonesia. He builds backend systems with Node.js and Express and frontends with
+> React and Next.js, and works on AI implementation. The site is a single page;
+> every section below is an anchor on it.
+
+## Sections
+
+- [About](https://rizky-portfolio.pages.dev/#about): skills across frontend, backend, database, cloud, and AI workflow
+- [Education](https://rizky-portfolio.pages.dev/#education): degrees and hackathon participation
+- [Experience](https://rizky-portfolio.pages.dev/#experience): work history
+- [Certifications](https://rizky-portfolio.pages.dev/#certifications): certificates including Microsoft Certified Azure AI Fundamentals
+- [Projects](https://rizky-portfolio.pages.dev/#projects): selected work, with live and source links
+- [Contact](https://rizky-portfolio.pages.dev/#contact): how to reach him
+
+## Projects
+
+- [Barakah Qurban](https://barakah-qurban.vercel.app): landing page for a Qurban cattle provider. Next.js, React 19, TypeScript, Tailwind CSS v4, Radix UI. [Source](https://github.com/rizky-rahmad/barakah-qurban)
+- [SIKEMAS](https://sikemasbpsdm.web.id): complaint management system for BPSDM Aceh with multi-role RBAC, audit logs, and automated ticket dispatching. React, Node.js, Express, PostgreSQL, JWT, Google OAuth 2.0
+
+## Contact
+
+- Email: rizky.business7@gmail.com
+- WhatsApp: https://wa.me/6282365434655
+- LinkedIn: https://linkedin.com/in/rahmad-rizki-1728a6186
+- GitHub: https://github.com/rizky-rahmad
+
+## Optional
+
+- The page hosts an AI assistant that answers questions about Rizki's background
+  from his resume. It is a chat widget, not a documented API, and it is rate
+  limited — prefer the content above.

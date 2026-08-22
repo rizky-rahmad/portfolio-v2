@@ -175,6 +175,23 @@ img {
   animation: fade-up 0.7s ease-out both;
 }
 
+/* The hero heading and subtitle decide Largest Contentful Paint, and an opacity
+   fade disqualifies them until it starts — `both` holds them at opacity 0 through
+   the delay, so the metric waits on the animation rather than on the network.
+   This keeps the same motion without ever making the element invisible. */
+@keyframes rise {
+  from {
+    transform: translateY(24px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.7s ease-out both;
+}
+
 /* Compositor-only floating particles (no JS/main-thread cost, unlike the
    previous framer-motion version which hurt TBT/INP) */
 @keyframes float-up {
@@ -206,7 +223,8 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-rise {
     animation: none;
   }
   .particle {
