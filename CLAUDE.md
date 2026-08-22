@@ -120,6 +120,32 @@ renders; only the chatbot fails.
 - `GOOGLE_DOC_ID` — the resume doc, which must stay publicly readable. Only
   `scripts/sync-resume.mjs` reads it; the request path never touches Google Docs.
 
+## Performance constraints
+
+Mobile PageSpeed is 98/100/96/100 with LCP 2.3s. Three things hold it there and
+are easy to undo by accident:
+
+- **The hero heading and subtitle use `.animate-rise`, not `.animate-fade-up`.**
+  The subtitle is the measured LCP element, and `fade-up` starts at `opacity: 0`
+  with `animation-fill-mode: both`, which disqualifies it until the animation
+  starts. `.animate-rise` moves without ever hiding. Never put an opacity fade,
+  or an `animationDelay`, on an above-the-fold text element.
+- **`experimental.inlineCss` is on.** The stylesheets were render-blocking for
+  ~750ms and the LCP breakdown was almost all "element render delay" waiting on
+  them. Inlining halved first paint (1064ms -> 508ms measured locally).
+- **The chatbot waits for `requestIdleCallback`.** Mounting it right after
+  hydration put its chunk on the wire during first paint and cost ~700ms.
+
+Measure before and after anything touching the hero, fonts, or above-the-fold
+images. A local production build plus a throttled Playwright profile is enough
+to see a regression; PageSpeed varies by several hundred ms between runs, so
+compare medians, not single runs.
+
+The one remaining Best Practices deduction is Cloudflare's own Web Analytics
+beacon (`cloudflareinsights.com/cdn-cgi/rum`) failing with
+`ERR_BLOCKED_BY_CLIENT`. It is not our code; turning Web Analytics off in the
+Cloudflare dashboard would make it 100 at the cost of losing analytics.
+
 ## Current focus
 
 Content updates and performance/SEO. Recent commits were LCP work — check the
