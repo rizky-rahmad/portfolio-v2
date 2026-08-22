@@ -14,6 +14,9 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    // Node runs lib/*.test.ts directly and its ESM resolver needs the explicit
+    // .ts extension on relative imports. Safe here because noEmit is on.
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,

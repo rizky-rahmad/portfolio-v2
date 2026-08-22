@@ -9,13 +9,17 @@ import {
   SendHorizontal,
   Loader2,
   MessageCircleQuestion,
+  Trash2,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
-interface Message {
-  role: "user" | "ai";
-  content: string;
-}
+import {
+  GREETING,
+  clearHistory as clearStoredHistory,
+  loadHistory,
+  saveHistory,
+  type Message,
+} from "@/lib/chat-history";
 
 export function ChatbotWidget() {
   // 1. Tambahkan state isMounted untuk mencegah Hydration Error
@@ -23,20 +27,29 @@ export function ChatbotWidget() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "ai",
-      content:
-        "Hi! I'm AI assistant Rahmad Rizki. Can I help you with anything regarding Rahmad's experience or qualifications?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // 2. Ubah state isMounted menjadi true hanya ketika di sisi Client (Browser)
+  // 2. Only flip isMounted on the client. The history load rides along here so
+  // it happens before the first save, otherwise the greeting would overwrite it.
   useEffect(() => {
+    const saved = loadHistory();
+    if (saved) setMessages(saved);
     setIsMounted(true);
   }, []);
+
+  // Persist after every change. isMounted gates it so the very first commit
+  // cannot write the default greeting over a stored conversation.
+  useEffect(() => {
+    if (!isMounted) return;
+    saveHistory(messages);
+  }, [messages, isMounted]);
+
+  const clearHistory = () => {
+    setMessages([GREETING]);
+    clearStoredHistory();
+  };
 
   // 3. Auto-scroll ke pesan terbaru atau saat jendela chat baru dibuka
   useEffect(() => {
@@ -110,12 +123,25 @@ export function ChatbotWidget() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-black/20 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                {messages.length > 1 && (
+                  <button
+                    onClick={clearHistory}
+                    aria-label="Clear chat history"
+                    title="Clear chat history"
+                    className="p-1.5 rounded-full hover:bg-black/20 transition"
+                  >
+                    <Trash2 className="w-[18px] h-[18px]" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close chat"
+                  className="p-1.5 rounded-full hover:bg-black/20 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Messages Area */}
