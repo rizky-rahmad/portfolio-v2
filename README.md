@@ -31,8 +31,12 @@ before: by pasting into the Google Doc.
 
 ### Performance treated as a measured problem
 
-Mobile PageSpeed scores **98 / 100 / 96 / 100** with LCP 2.3s, CLS 0, and
-Agentic Browsing 3/3.
+[![PageSpeed Insights scores for the mobile run: Performance 98, Accessibility 100, Best Practices 96, SEO 100, Agentic Browsing 3/3](docs/pagespeed.png)](https://pagespeed.web.dev/analysis/https-rizky-portfolio-pages-dev/3739kdk2w9?form_factor=mobile)
+
+That is the mobile run — LCP 2.3s, CLS 0, Speed Index 1.2s — and the report
+behind it is public, so the image links to it. Best Practices sits at 96 because
+Cloudflare's own analytics beacon fails with `ERR_BLOCKED_BY_CLIENT`; turning it
+off would buy the last four points at the cost of having no analytics at all.
 
 Getting there meant measuring rather than guessing, and being wrong twice. The
 chatbot's latency looked like a payload problem — 2.2MB going over the wire per
