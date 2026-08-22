@@ -70,25 +70,49 @@ Two constraints that are easy to break:
 - API routes must be edge runtime (`export const runtime = "edge"` in
   `app/api/chat/route.ts`). Node-only APIs will fail the build there.
 
+## The chatbot
+
+Visitors ask questions; `app/api/chat/route.ts` answers them from
+`content/resume.json` — a Markdown transcription of Rizky's Google Doc resume,
+including everything written inside the scanned certificate images.
+
+**The resume is transcribed when the document changes, never per request.**
+Sending the PDF to Gemini on every message used to cost ~40s a reply for a
+reading that came out the same every time. `scripts/sync-resume.mjs` downloads
+the doc, hashes it, and re-transcribes only on a change; the hourly GitHub
+Actions job in `.github/workflows/sync-resume.yml` runs it and commits the
+result. Rizky updates the resume by pasting into the Google Doc — that stays
+his only manual step. To force a sync now, use the workflow's *Run workflow*
+button, or run `npm run resume:sync` locally.
+
+Two constraints worth keeping in mind before changing this route:
+
+- **Free-tier Gemini quota is per project PER MODEL, and it is small** —
+  measured at 20 requests/day for `gemini-2.5-flash`. `MODELS` lists two models
+  precisely so a spent quota falls through to a second bucket instead of taking
+  the chatbot offline until midnight. Note the app's own rate limit (15/min per
+  IP) is far looser than the daily ceiling, so one visitor can still exhaust a
+  day.
+- **Redis is optional at runtime by design.** The rate limiter fails open, so an
+  Upstash outage costs the rate limit, not the chatbot. Don't turn that back
+  into a hard dependency — a deleted free-tier database took the whole chatbot
+  down once. If the route 500s, resolve the Upstash host with `dig` before
+  suspecting Gemini.
+
+Gemini is called over plain REST, not `@google/generative-ai`. That SDK is
+end-of-life and has no `thinkingConfig`, and disabling thinking is what makes
+replies land in ~2s instead of ~6s.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and fill it in. Without these the site still
 renders; only the chatbot fails.
 
-- `GEMINI_API_KEY` — Google AI Studio, model is `gemini-2.5-flash`.
-- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — rate limit (15 req/min
-  per IP) and the 1-hour resume PDF cache.
-- `GOOGLE_DOC_ID` — Google Doc holding the resume. The route exports it as PDF so
-  Gemini reads the certificate images too, so the doc must be publicly readable.
-
-Redis is optional at runtime by design: the rate limiter fails open and both
-cache calls are best-effort, so an Upstash outage costs speed, not the chatbot.
-Don't "fix" that back into a hard dependency. If the route 500s, resolve the
-Upstash host with `dig` before suspecting Gemini — a deleted free-tier database
-has caused exactly this once.
-
-Replies take ~60s with the cache cold, because the whole resume PDF (~2.2MB
-base64) goes to Gemini on every message. That is the current design, not a bug.
+- `GEMINI_API_KEY` — from Google AI Studio. Used by the route and by the sync
+  script; CI needs it as a repository secret too.
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — rate limiting only.
+- `GOOGLE_DOC_ID` — the resume doc, which must stay publicly readable. Only
+  `scripts/sync-resume.mjs` reads it; the request path never touches Google Docs.
 
 ## Current focus
 
