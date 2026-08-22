@@ -24,6 +24,32 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
+/**
+ * ponytail: the rate limiter fails OPEN. Redis is a guard rail, not the feature
+ * — an Upstash outage used to throw here and take the whole chatbot down with a
+ * 500. Traffic on a personal portfolio is low and Gemini enforces its own quota,
+ * so serving unthrottled beats serving nothing. If abuse ever shows up, swap
+ * this for an in-memory fallback counter.
+ */
+async function isWithinRateLimit(ip: string) {
+  try {
+    const { success } = await ratelimit.limit(ip);
+    return success;
+  } catch (error) {
+    console.error("Rate limiter unavailable, allowing request:", error);
+    return true;
+  }
+}
+
+function asPdfPart(base64Data: string) {
+  return {
+    inlineData: {
+      data: base64Data,
+      mimeType: "application/pdf",
+    },
+  };
+}
+
 const safetySettings = [
   {
     category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -35,45 +61,46 @@ const safetySettings = [
   },
 ];
 
-// Fungsi untuk mengambil dokumen dari Google Docs sebagai PDF
+/**
+ * Fetches the resume as a PDF (not text) so Gemini can read the certificate
+ * images too. Redis only caches it — every cache call is best-effort, so a
+ * Redis failure costs a re-download, never the answer.
+ */
 async function getResumeContextPdf() {
   const docId = process.env.GOOGLE_DOC_ID;
   if (!docId) throw new Error("GOOGLE_DOC_ID is not defined");
 
   const cacheKey = `resume_pdf_cache_${docId}`;
-  // // Ubah format menjadi 'pdf' agar gambar sertifikat tetap dipertahankan
+
+  const cached = await redis.get<string>(cacheKey).catch((error) => {
+    console.error("Resume cache read failed, re-downloading:", error);
+    return null;
+  });
+
+  if (cached) {
+    console.log("Resume PDF served from Upstash cache");
+    return asPdfPart(cached);
+  }
 
   try {
-    const cachedPDFBase64 = await redis.get<string>(cacheKey);
-
-    if (cachedPDFBase64) {
-      console.log("Get pdf from redis upstash cache");
-      return {
-        inlineData: {
-          data: cachedPDFBase64,
-          mimeType: "application/pdf",
-        },
-      };
-    }
-
-    console.log("PDF downloaded from google drive");
     const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
     const response = await fetch(exportUrl, { next: { revalidate: 3600 } });
-    if (!response.ok) throw new Error("Failed to fetch PDF");
+    if (!response.ok) {
+      throw new Error(`Google Docs export returned ${response.status}`);
+    }
 
     const arrayBuffer = await response.arrayBuffer();
     const base64Data = Buffer.from(arrayBuffer).toString("base64");
+    console.log("Resume PDF downloaded from Google Docs");
 
-    await redis.set(cacheKey, base64Data, { ex: 3600 });
+    // Best-effort: a failed cache write only costs the next request a download.
+    await redis
+      .set(cacheKey, base64Data, { ex: 3600 })
+      .catch((error) => console.error("Resume cache write failed:", error));
 
-    return {
-      inlineData: {
-        data: base64Data,
-        mimeType: "application/pdf",
-      },
-    };
+    return asPdfPart(base64Data);
   } catch (error) {
-    console.error("Error fetching doc:", error);
+    console.error("Resume PDF download failed:", error);
     return null;
   }
 }
@@ -81,9 +108,8 @@ async function getResumeContextPdf() {
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get("cf-connecting-ip") || "anonymous";
-    const { success } = await ratelimit.limit(ip);
 
-    if (!success) {
+    if (!(await isWithinRateLimit(ip))) {
       return NextResponse.json(
         {
           response:
@@ -102,7 +128,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Ambil PDF dari Google Drive
+    // 1. Fetch the resume PDF
     const pdfPart = await getResumeContextPdf();
 
     if (!pdfPart) {
@@ -116,7 +142,7 @@ export async function POST(request: Request) {
       safetySettings,
     });
 
-    // 2. Sesuaikan System Prompt untuk memberitahu bahwa referensinya adalah file terlampir
+    // 2. The system prompt points Gemini at the attached file as its only source
     const systemPrompt = `
 You are a highly polite, professional, and helpful personal AI assistant for Rahmad Rizki. 
 Your task is to answer questions from visitors to Rahmad Rizki's portfolio website regarding his background, skills, experience, and the certificates he has achieved.
@@ -138,14 +164,14 @@ STRICT RULES FOR ANSWERING:
 Visitor's Question: ${message}
 `;
 
-    // 3. Kirimkan teks prompt dan file PDF secara bersamaan ke Gemini
+    // 3. Send the prompt and the PDF together
     const result = await model.generateContent([systemPrompt, pdfPart]);
     const response = result.response;
     const text = response.text();
 
     return NextResponse.json({ response: text });
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("Chat route error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
