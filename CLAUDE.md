@@ -69,6 +69,12 @@ Two constraints that are easy to break:
   optimization back on.
 - API routes must be edge runtime (`export const runtime = "edge"` in
   `app/api/chat/route.ts`). Node-only APIs will fail the build there.
+- `.npmrc` sets `legacy-peer-deps=true` and deploys need it. The build command
+  is `npx @cloudflare/next-on-pages@1`, whose last release (Sep 2025) pins
+  `@cloudflare/workers-types@^4` while every current wrangler requires `^5`;
+  without the flag npm refuses to install the tool and the build dies before it
+  reads the project. Cloudflare deprecated next-on-pages in favour of the
+  OpenNext adapter, so this is a stay of execution, not a fix.
 
 ## The chatbot
 
