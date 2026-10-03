@@ -90,9 +90,8 @@ export function Hero() {
         <p
           className="animate-rise mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
         >
-          <span className="text-foreground font-medium">Full Stack Web Developer</span> & <span className="text-foreground font-medium">AI Implementation Specialist</span>
-          <br className="hidden sm:block" />
-          <span className="text-base sm:text-lg md:text-xl">Building robust web solutions with modern technologies</span>
+          <span className="text-foreground font-medium">Full Stack Software Engineer</span> · <span className="text-foreground font-medium whitespace-nowrap">AI in Production</span>
+          <span className="block mt-1 text-base sm:text-lg md:text-xl">I ship AI products that real teams run on every day</span>
         </p>
 
         {/* CTA Buttons */}

@@ -7,24 +7,24 @@ import { MapPin, Phone, Mail, Calendar, Code2, Cpu, Database, Cloud } from "luci
 
 const skills = [
   {
-    category: "Frontend",
+    category: "Frontend & Mobile",
     icon: Code2,
-    items: ["React (Vite)", "Next.js", "HTML5/CSS3", "Tailwind CSS", "Bootstrap 5", "JavaScript (ES6+)"],
+    items: ["TypeScript", "React", "Next.js", "Tailwind CSS", "Vite", "React Native", "Expo"],
   },
   {
-    category: "Backend",
+    category: "Backend & Data",
     icon: Database,
-    items: ["Node.js", "Express.js", "RESTful APIs", "JWT Auth", "Redis", "PostgreSQL"],
+    items: ["Node.js", "Hono", "Express", "NestJS", "Socket.IO", "BullMQ", "PostgreSQL", "Drizzle", "Prisma", "Redis"],
   },
   {
-    category: "Cloud & DevOps",
-    icon: Cloud,
-    items: ["Microsoft Azure", "Docker", "CI/CD", "Cloudflare", "Supabase"],
-  },
-  {
-    category: "AI & Tools",
+    category: "AI",
     icon: Cpu,
-    items: ["OpenAI GPT-4", "Google Gemini", "Azure Cognitive Services", "Prompt Engineering", "LLM Integration"],
+    items: ["Mastra Agents", "OpenRouter", "Gemini", "OpenAI Whisper", "RAG", "LiveKit Voice", "Claude Code"],
+  },
+  {
+    category: "DevOps & Testing",
+    icon: Cloud,
+    items: ["Docker", "Coolify", "Cloudflare", "Vercel", "GitHub Actions", "Vitest", "Playwright"],
   },
 ]
 
@@ -32,8 +32,8 @@ const bioInfo = [
   { 
     icon: MapPin, 
     label: "Location", 
-    value: "Central Jakarta, Indonesia",
-    href: "https://www.google.com/maps/search/Central+Jakarta+Indonesia",
+    value: "Ubud, Bali, Indonesia",
+    href: "https://www.google.com/maps/search/Ubud+Bali+Indonesia",
     isExternal: true
   },
   { 
@@ -102,10 +102,10 @@ export function About() {
                 Professional Summary
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                I am a result-oriented Full Stack Developer with hands-on experience delivering functional web solutions for institutional clients using both <span className="text-foreground font-medium">Agile and Waterfall methodologies</span>. My expertise spans building robust backend systems with <span className="text-foreground font-medium">Node.js and Express.js</span>, creating responsive frontends with <span className="text-foreground font-medium">React and Next.js</span>, and managing efficient databases with <span className="text-foreground font-medium">PostgreSQL and Redis</span>.
+                I am a Full Stack Developer at <span className="text-foreground font-medium">PT Unicorn</span>, a growing multi-brand company, where I work in a small product team that ships what the business runs on every day: an AI agent that handles customer conversations and bookings across <span className="text-foreground font-medium">WhatsApp, Instagram, Email and TikTok</span>, an HR platform used by 154 employees, and a multi-brand website builder. I work close to the people who use what I build, and take features from first conversation to production. I work across the whole stack with <span className="text-foreground font-medium">Next.js, React Native, Node.js and PostgreSQL</span>.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                As a <span className="text-foreground font-medium">Microsoft Certified Azure AI Professional</span>, I am proficient in leveraging tools like <span className="text-foreground font-medium">GPT-4, Gemini, and Azure Cognitive Services</span> to optimize development workflows and actively participate in AI-integrated hackathons to drive innovation.
+                I put language models into production with <span className="text-foreground font-medium">guardrails, human handoff and measured results</span>, and use Claude Code daily to move faster while checking every change with tests and production data. <span className="text-foreground font-medium">Microsoft Certified: Azure AI Fundamentals</span>.
               </p>
 
               {/* Bio Info Grid */}

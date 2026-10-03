@@ -44,7 +44,7 @@ the top of the file — edit those to update the site:
 | Degrees, hackathons | `components/portfolio/education.tsx` — `education`, `hackathons` |
 | Work history | `components/portfolio/experience.tsx` — `experiences` |
 | Certificates | `components/portfolio/certifications.tsx` — `featuredCertification`, `otherCertifications` |
-| Projects | `components/portfolio/projects.tsx` — `featuredProjects`, `portfolioProjects` |
+| Projects | `components/portfolio/projects.tsx` — `featuredProjects` |
 | Contact links | `components/portfolio/contact.tsx`, `footer.tsx` |
 
 Adding a project or certificate means adding the array entry **and** dropping the

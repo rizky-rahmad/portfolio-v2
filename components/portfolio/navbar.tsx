@@ -92,7 +92,7 @@ export function Navbar() {
                 <div className="absolute inset-0 rounded-lg bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div className="hidden sm:block">
-                <span className="text-foreground font-semibold text-lg">Rahmad</span>
+                <span className="text-foreground font-semibold text-lg">Rizky</span>
                 <span className="text-primary font-semibold text-lg">.</span>
               </div>
             </m.a>

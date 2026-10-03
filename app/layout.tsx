@@ -11,20 +11,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Rahmad Rizki | Full Stack Developer & AI Specialist',
-  description: 'Result-oriented Full Stack Developer with expertise in React, Next.js, Node.js, and AI implementation. Building robust web solutions with modern technologies.',
+  title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
+  description: 'Full Stack Software Engineer shipping AI products to production: an omnichannel AI agent for customer conversations and bookings, an HR platform and a multi-brand website builder. Next.js, React Native, Node.js, PostgreSQL.',
   keywords: ['Full Stack Developer', 'React', 'Next.js', 'Node.js', 'AI', 'Web Developer', 'Indonesia'],
   authors: [{ name: 'Rahmad Rizki' }],
   creator: 'Rahmad Rizki',
   openGraph: {
-    title: 'Rahmad Rizki | Full Stack Developer & AI Specialist',
-    description: 'Result-oriented Full Stack Developer with expertise in React, Next.js, Node.js, and AI implementation.',
+    title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
+    description: 'Full Stack Software Engineer shipping AI products to production. Next.js, React Native, Node.js, PostgreSQL.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rahmad Rizki | Full Stack Developer & AI Specialist',
-    description: 'Result-oriented Full Stack Developer with expertise in React, Next.js, Node.js, and AI implementation.',
+    title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
+    description: 'Full Stack Software Engineer shipping AI products to production. Next.js, React Native, Node.js, PostgreSQL.',
   },
 }
 

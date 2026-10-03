@@ -75,7 +75,7 @@ export function Footer() {
                 </div>
               </a>
               <p className="mt-4 text-muted-foreground max-w-md leading-relaxed">
-                Full Stack Web Developer & AI Implementation Specialist based in Jakarta, Indonesia. Building robust web solutions with modern technologies and AI integration.
+                Full Stack Software Engineer based in Ubud, Bali. Shipping AI products that run in production every day.
               </p>
 
               {/* Social Links */}
@@ -140,7 +140,7 @@ export function Footer() {
                     +62 823 6543 4655
                   </a>
                 </li>
-                <li>Central Jakarta, Indonesia</li>
+                <li>Ubud, Bali, Indonesia</li>
               </ul>
             </div>
           </div>

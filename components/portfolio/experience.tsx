@@ -7,6 +7,22 @@ import { Briefcase, Calendar, MapPin, Building2, CheckCircle2 } from "lucide-rea
 
 const experiences = [
   {
+    title: "Full Stack Developer",
+    company: "PT Unicorn",
+    location: "Ubud, Bali, Indonesia",
+    period: "Jun 2026 – Present",
+    type: "Full-time",
+    responsibilities: [
+      "Channelflow: co-developed an omnichannel inbox for WhatsApp, Instagram, Email and TikTok where an AI agent answers customers in their own language and completes bookings end to end — ~3,500 bookings and ~17,700 messages a month in production.",
+      "Shipped LLM guardrails: the agent writes ~400 replies a day and hands the conversation to a human on sensitive or low-confidence cases, with a second model verifying before it continues.",
+      "Contributed to the message pipeline's reliability: queued processing with retries, handoff to a human after a crash, voice-note transcription and photo understanding.",
+      "Co-developed a staff Android app (Expo) with day, list and month views and analytics, and a real-time voice agent (LiveKit) now in pilot.",
+      "PeopleOS: contributed to an HR platform used by 154 employees on web and Android for hiring, training, scheduling, GPS clock-in and leave — focus on the mobile app and approval workflows.",
+      "Unicorn CMS: developing a multi-brand drag-and-drop website builder — 20+ elements, per-device layouts, version history, SEO and tracking, covered by end-to-end tests.",
+    ],
+    skills: ["Next.js", "Hono", "Mastra", "BullMQ", "PostgreSQL", "Drizzle", "React Native (Expo)", "LiveKit", "Playwright"],
+  },
+  {
     title: "Website Developer & IT Support",
     company: "Aceh Besar Prosecutor's Office",
     location: "Aceh Besar, Indonesia",
@@ -30,6 +46,17 @@ const experiences = [
       "Delivered efficient IT support and resolved technical issues within a 24-hour window.",
     ],
     skills: ["Google Workspace", "Data Digitization", "IT Support", "Document Management"],
+  },
+  {
+    title: "Website Developer",
+    company: "AGC-Scopus 2019 – The 2nd Aceh Global Conference",
+    location: "Banda Aceh, Indonesia",
+    period: "2019",
+    type: "Project",
+    responsibilities: [
+      "Designed and managed the conference website for 100+ attendees, with live updates during the event.",
+    ],
+    skills: ["Web Design", "Content Management"],
   },
 ]
 
@@ -60,7 +87,7 @@ export function Experience() {
             Professional Experience
           </h2>
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
-            A track record of delivering results and supporting institutional technology needs.
+            From IT support to shipping AI products that run in production.
           </p>
         </m.div>
 
@@ -136,15 +163,11 @@ export function Experience() {
                   </span>
                 </div>
 
-                <ul className={`mt-6 space-y-3 ${
-                  index % 2 === 0 ? 'md:text-right' : 'md:text-left'
-                }`}>
+                <ul className="mt-6 space-y-3 text-left">
                   {exp.responsibilities.map((resp, i) => (
                     <li 
                       key={i} 
-                      className={`flex items-start gap-3 text-muted-foreground ${
-                        index % 2 === 0 ? 'md:flex-row-reverse' : ''
-                      }`}
+                      className="flex items-start gap-3 text-muted-foreground"
                     >
                       <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                       <span className="text-sm leading-relaxed">{resp}</span>

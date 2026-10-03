@@ -2,8 +2,8 @@
 
 import { m } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { ExternalLink, Github, Layers, ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import { ExternalLink, Github, Layers } from "lucide-react";
 import Image from "next/image";
 
 // Tambahan Tipe Data untuk memperbaiki error TypeScript
@@ -15,10 +15,58 @@ type FeaturedProject = {
   githubUrl?: string;
   stack: string[];
   featured: boolean;
+  label?: string;
 };
 
 // Terapkan tipe data ke array
 const featuredProjects: FeaturedProject[] = [
+  {
+    title: "Channelflow — Omnichannel AI Agent",
+    description:
+      "One inbox for WhatsApp, Instagram, Email and TikTok where an AI agent answers customers in their own language and completes bookings end to end — ~3,500 bookings and ~17,700 messages a month in production. Sensitive or low-confidence chats go to a human, a second model verifies before the agent continues, and a queue with retries means a crash never leaves a customer unanswered.",
+    image: "/images/projects/channelflow.webp",
+    stack: ["Next.js", "Hono", "Mastra", "BullMQ", "PostgreSQL", "Drizzle", "Expo", "LiveKit"],
+    featured: true,
+    label: "Team Project · PT Unicorn",
+  },
+  {
+    title: "PeopleOS — HR Platform",
+    description:
+      "One HR platform for hiring, training, shift scheduling, GPS clock-in and leave, used by 154 employees on web and Android. My focus: the mobile app and the multi-step leave approval flow.",
+    image: "/images/projects/peopleos.webp",
+    stack: ["React", "Express", "PostgreSQL", "Drizzle", "React Native (Expo)"],
+    featured: true,
+    label: "Team Project · PT Unicorn",
+  },
+  {
+    title: "Unicorn CMS — Multi-brand Website Builder",
+    description:
+      "A drag-and-drop page builder for every brand site: 20+ elements, per-device layouts, version history with restore, SEO and tracking — covered by end-to-end tests.",
+    image: "/images/projects/unicorn-cms.webp",
+    stack: ["Next.js", "Hono", "PostgreSQL", "Drizzle", "Tiptap", "Playwright"],
+    featured: true,
+    label: "Team Project · PT Unicorn",
+  },
+  {
+    title: "Portfolio with AI Assistant",
+    description:
+      "This site. An assistant answers visitors' questions about my background in English or Indonesian. Reply time dropped from ~49s to ~2s by transcribing the résumé once when it changes instead of on every message, and mobile PageSpeed went from 90 to 98.",
+    image: "/images/projects/portfolio-ai.webp",
+    liveUrl: "https://rizky-portfolio.pages.dev",
+    githubUrl: "https://github.com/rizky-rahmad/portfolio-v2",
+    stack: ["Next.js", "Gemini", "Cloudflare", "GitHub Actions"],
+    featured: true,
+  },
+  {
+    title: "ApplyMate AI",
+    description:
+      "Turns a résumé and a job posting into a match score, the skills that line up and the ones missing, and a tailored cover letter — grounded only in the candidate's real experience.",
+    image: "/images/projects/applymate.webp",
+    liveUrl: "https://apply-mate-ai-nine.vercel.app",
+    githubUrl: "https://github.com/rizky-rahmad/ApplyMateAi",
+    stack: ["Next.js", "TypeScript", "Gemini", "Tailwind CSS"],
+    featured: true,
+  },
   {
     title: "Barakah Qurban — Premium Landing Page",
     description:
@@ -63,33 +111,9 @@ const featuredProjects: FeaturedProject[] = [
   },
 ];
 
-const portfolioProjects = [
-  {
-    title: "E-Commerce Dashboard",
-    category: "Web Application",
-    image: "/images/projects/ecommerce.jpg",
-  },
-  {
-    title: "AI Chat Interface",
-    category: "AI Integration",
-    image: "/images/projects/ai-chat.jpg",
-  },
-  {
-    title: "Analytics Platform",
-    category: "Data Visualization",
-    image: "/images/projects/analytics.jpg",
-  },
-  {
-    title: "Mobile App Landing",
-    category: "Landing Page",
-    image: "/images/projects/mobile-landing.jpg",
-  },
-];
-
 export function Projects() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
   return (
     <section
@@ -143,7 +167,7 @@ export function Projects() {
                   <div className="relative aspect-video rounded-2xl overflow-hidden bg-card border border-border">
                     <Image
                       src={project.image}
-                      alt={project.title}
+                      alt={`Screenshot of ${project.title}`}
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -186,7 +210,7 @@ export function Projects() {
                   <div className="flex items-center gap-2 mb-4">
                     <Layers className="w-5 h-5 text-primary" />
                     <span className="text-primary text-sm font-medium">
-                      Featured Project
+                      {project.label ?? "Featured Project"}
                     </span>
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
@@ -238,129 +262,6 @@ export function Projects() {
             ))}
         </div>
 
-        {/* Other Projects 
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mb-12"
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-8">
-            Other Notable Projects
-          </h3>
-
-          // Project Cards 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProjects
-              .filter((p) => !p.featured)
-              .map((project, index) => (
-                <m.div
-                  key={project.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
-                  className="group bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-all"
-                >
-                  <div className="relative aspect-video">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-card to-transparent" />
-                  </div>
-                  <div className="p-6">
-                    <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h4>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 mt-4">
-                      {project.stack.slice(0, 3).map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-1 text-xs rounded bg-secondary text-secondary-foreground"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {project.stack.length > 3 && (
-                        <span className="px-2 py-1 text-xs rounded bg-secondary text-muted-foreground">
-                          +{project.stack.length - 3}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          <Github className="w-4 h-4" />
-                          <span>View Code</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </m.div>
-              ))}
-          </div>
-        </m.div>
-        */}
-
-        {/* Portfolio Gallery */}
-        {/* <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-        >
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-foreground">Project Gallery</h3>
-            <a
-              href="https://github.com/rizky-rahmad"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
-            >
-              <span>View All on GitHub</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {portfolioProjects.map((project, index) => (
-              <m.div
-                key={project.title}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
-                onMouseEnter={() => setHoveredProject(index)}
-                onMouseLeave={() => setHoveredProject(null)}
-                className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer"
-              >
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent transition-opacity duration-300 ${
-                  hoveredProject === index ? 'opacity-100' : 'opacity-0'
-                }`} />
-                <div className={`absolute inset-0 flex flex-col items-center justify-center text-center p-4 transition-opacity duration-300 ${
-                  hoveredProject === index ? 'opacity-100' : 'opacity-0'
-                }`}>
-                  <span className="text-xs text-primary font-medium mb-1">{project.category}</span>
-                  <h4 className="text-sm font-bold text-foreground">{project.title}</h4>
-                </div>
-              </m.div>
-            ))}
-          </div>
-        </m.div> */}
       </div>
     </section>
   );

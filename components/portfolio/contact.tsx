@@ -21,8 +21,8 @@ const contactInfo = [
   {
     icon: MapPin,
     label: "Location",
-    value: "Central Jakarta, Indonesia",
-    href: "https://maps.google.com/?q=Central+Jakarta",
+    value: "Ubud, Bali, Indonesia",
+    href: "https://maps.google.com/?q=Ubud+Bali",
   },
 ]
 
