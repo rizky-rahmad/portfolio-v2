@@ -19,8 +19,13 @@ import resume from "@/content/resume.json";
  * only 20 requests a day, and once it is spent the chatbot is dead until
  * midnight. Listing a second model gives it a second bucket. They are in speed
  * order; both answered certificate-detail questions correctly when measured.
+ * Measured 2026-10-03: flash-lite 2.3s, 3.5-flash 18s or a 503 after 15s.
  */
-const MODELS = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
+const MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash"];
+
+// A model that hangs falls through to the next one instead of holding the
+// visitor on "Thinking..." until the platform kills the request.
+const MODEL_TIMEOUT_MS = 12_000;
 
 const endpointFor = (model: string) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -78,11 +83,19 @@ async function askGemini(prompt: string) {
   // returned both. Neither is a bug the visitor should read as "technical
   // problems", and both are answered by trying the next model instead.
   for (const model of MODELS) {
-    const response = await fetch(`${endpointFor(model)}?key=${process.env.GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    let response: Response;
+    try {
+      response = await fetch(`${endpointFor(model)}?key=${process.env.GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
+      });
+    } catch (error) {
+      if ((error as Error).name !== "TimeoutError") throw error;
+      console.warn(`${model} timed out after ${MODEL_TIMEOUT_MS}ms, falling back to the next model`);
+      continue;
+    }
 
     if (response.status === 429 || response.status === 503) {
       console.warn(`${model} unavailable (${response.status}), falling back to the next model`);

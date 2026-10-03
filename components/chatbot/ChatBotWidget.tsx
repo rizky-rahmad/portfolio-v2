@@ -73,6 +73,8 @@ export function ChatbotWidget() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMessage }),
+        // Two models at 12s each, plus slack; past this the visitor gets an answer, not a spinner.
+        signal: AbortSignal.timeout(30_000),
       });
 
       const data = await response.json();
