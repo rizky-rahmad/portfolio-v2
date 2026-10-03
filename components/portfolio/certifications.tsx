@@ -10,7 +10,7 @@ import Image from "next/image"
 const featuredCertification = {
   title: "Microsoft Certified: Azure AI Fundamentals AI-900",
   issuer: "Microsoft",
-  date: "Recent",
+  date: "Mar 2026",
   description: "Demonstrated foundational knowledge of machine learning (ML) and artificial intelligence (AI) concepts and related Microsoft Azure services.",
   skills: ["Artificial Intelligence", "Machine Learning", "Azure Cognitive Services", "Computer Vision"],
   image: "/images/certificates/azure_ai900.jpg",

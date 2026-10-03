@@ -2,7 +2,7 @@
 
 import { m } from "framer-motion"
 import Image from "next/image"
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react"
+import { ArrowDown, Download, Github, Linkedin, Mail } from "lucide-react"
 
 // Deterministic positions so SSR and client markup match (no hydration mismatch),
 // animated purely via CSS on the compositor thread.
@@ -122,6 +122,16 @@ export function Hero() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold text-lg hover:bg-secondary/80 transition-all border border-border"
           >
             Get In Touch
+          </m.a>
+          <m.a
+            href="https://drive.google.com/uc?export=download&id=13pYhOAiU5Cz-0i3O_4n8BBDVfDRmgxRl"
+            download
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold text-lg hover:bg-secondary/80 transition-all border border-border"
+          >
+            <Download className="w-5 h-5" aria-hidden="true" />
+            Download Resume
           </m.a>
         </div>
 
