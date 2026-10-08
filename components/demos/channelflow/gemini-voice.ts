@@ -63,25 +63,62 @@ class Playback extends AudioWorkletProcessor {
     super();
     this.queue = []; this.offset = 0;
     this.step = ${OUTPUT_RATE} / sampleRate; this.pos = 0; this.a = 0; this.b = 0;
+    this.preRoll = ${OUTPUT_RATE / 10}; // 100 ms of 24 kHz sound before the first sample out
+    this.buffered = 0; this.started = false;
+    this.starved = false; this.last = 0;
     this.port.onmessage = ({ data }) => {
-      if (data === 'clear') { this.queue = []; this.offset = 0; this.a = 0; this.b = 0; }
-      else this.queue.push(new Int16Array(data));
+      if (data === 'clear') {
+        // New turn replaces the old: drop queued sound, but keep the started
+        // latch — re-priming 100 ms on every barge-in would lag each reply.
+        this.queue = []; this.offset = 0; this.a = 0; this.b = 0;
+        this.buffered = 0; this.starved = false; this.last = 0;
+      } else {
+        const view = new Int16Array(data);
+        this.buffered += view.length;
+        this.queue.push(view);
+      }
     };
   }
   take() {
     while (this.queue.length) {
       const head = this.queue[0];
-      if (this.offset < head.length) return head[this.offset++];
+      if (this.offset < head.length) {
+        this.buffered--;
+        return head[this.offset++] / 0x8000; // int16 -> float: skipping this clips everything
+      }
       this.queue.shift(); this.offset = 0;
     }
-    return 0;
+    return null; // nothing queued: the caller fades instead of chopping to zero
   }
   process(_, outputs) {
     const out = outputs[0][0];
     for (let i = 0; i < out.length; i++) {
+      if (!this.started) {
+        // Hold silence until a jitter cushion lands: WS text frames arrive
+        // bursty, and starting on the first frame starves mid-word (clicks).
+        if (this.buffered < this.preRoll) { out[i] = 0; continue; }
+        this.started = true;
+      }
       this.pos += this.step;
-      while (this.pos >= 1) { this.pos -= 1; this.a = this.b; this.b = this.take(); }
-      out[i] = this.a + (this.b - this.a) * this.pos;
+      while (this.pos >= 1) {
+        this.pos -= 1;
+        const s = this.take();
+        if (s === null) {
+          this.a = 0; this.b = 0; this.pos = 0; // resync: resume must not leap from stale levels
+          this.starved = true;
+          break;
+        }
+        if (this.starved) { this.a = s; this.b = s; this.starved = false; }
+        else { this.a = this.b; this.b = s; }
+      }
+      let v = this.a + (this.b - this.a) * this.pos;
+      if (this.starved) {
+        // Fade the last level out instead of dropping to zero mid-waveform.
+        this.last *= 0.985;
+        if (this.last < 0.0002 && this.last > -0.0002) this.last = 0;
+        v = this.last;
+      } else this.last = v;
+      out[i] = v;
     }
     return true;
   }
@@ -363,10 +400,27 @@ export class GeminiVoiceEngine implements VoiceEngine {
     }
     if (content.inputTranscription?.text) this.userBuf += content.inputTranscription.text;
     if (content.outputTranscription?.text) this.agentBuf += content.outputTranscription.text;
+    // One postMessage per server message, not per part: a reply streams
+    // dozens of small parts and each hop costs GC churn on the audio thread.
+    const chunks: Int16Array[] = [];
+    let total = 0;
     for (const part of content.modelTurn?.parts ?? []) {
       if (!part.inlineData?.data) continue;
       const samples = base64ToInt16(part.inlineData.data);
-      this.playback?.port.postMessage(samples.buffer, [samples.buffer]);
+      chunks.push(samples);
+      total += samples.length;
+    }
+    if (chunks.length === 1) {
+      const only = chunks[0];
+      this.playback?.port.postMessage(only.buffer, [only.buffer]);
+    } else if (chunks.length > 1) {
+      const merged = new Int16Array(total);
+      let at = 0;
+      for (const c of chunks) {
+        merged.set(c, at);
+        at += c.length;
+      }
+      this.playback?.port.postMessage(merged.buffer, [merged.buffer]);
     }
     if (content.turnComplete) this.flushTurn();
   }
