@@ -22,11 +22,15 @@ export type VoiceLine = {
   at: string;
 };
 
+export type VoiceStage = "token" | "mic" | "session";
+
 export type VoiceEngineEvents = {
   onLine: (line: Omit<VoiceLine, "id" | "at">) => void;
   onLevel: (level: number) => void; // 0..1 remote audio level for the orb
   /** The session is ready: mic streaming (live) or script running (preview). */
   onReady: () => void;
+  /** Live engine only: which connecting stage was reached (for staged hints). */
+  onStage?: (stage: VoiceStage) => void;
   onEnded: (summary: { seconds: number; turns: number }) => void;
   onError: (message: string) => void;
 };
@@ -173,7 +177,9 @@ export function VoiceDemo() {
   const [summary, setSummary] = useState<{ seconds: number; turns: number } | null>(null);
   const [error, setError] = useState("");
   const [previewMode, setPreviewMode] = useState(false);
+  const [stage, setStage] = useState<VoiceStage | null>(null);
   const engineRef = useRef<VoiceEngine | null>(null);
+  const watchdogRef = useRef(0);
   const idRef = useRef(0);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef(state);
@@ -193,7 +199,13 @@ export function VoiceDemo() {
   }, [lines, state]);
 
   // dispose engine on unmount
-  useEffect(() => () => engineRef.current?.dispose(), []);
+  useEffect(
+    () => () => {
+      engineRef.current?.dispose();
+      window.clearTimeout(watchdogRef.current);
+    },
+    []
+  );
 
   // Audit/CI hook: ?voice=preview forces the scripted engine (no mic, no quota).
   useEffect(() => {
@@ -207,6 +219,11 @@ export function VoiceDemo() {
     setLines((prev) => [...prev, { ...line, id: idRef.current, at: stamp() }]);
   }, []);
 
+  const clearWatchdog = useCallback(() => {
+    window.clearTimeout(watchdogRef.current);
+    watchdogRef.current = 0;
+  }, []);
+
   const start = useCallback(
     (preview: boolean) => {
       setError("");
@@ -215,18 +232,23 @@ export function VoiceDemo() {
       setSummary(null);
       setMuted(false);
       setPreviewMode(preview);
+      setStage(null);
       setState("connecting");
       const events: VoiceEngineEvents = {
         onLine: pushLine,
         onLevel: setLevel,
+        onStage: setStage,
         onReady: () => {
+          clearWatchdog();
           if (stateRef.current === "connecting") setState("live");
         },
         onEnded: (s) => {
+          clearWatchdog();
           setSummary(s);
           setState("ended");
         },
         onError: (message) => {
+          clearWatchdog();
           setError(message);
           setState("error");
         },
@@ -237,8 +259,20 @@ export function VoiceDemo() {
       engineRef.current?.dispose();
       engineRef.current = engine;
       void engine.start(lang);
+      if (!preview) {
+        // Last-resort net: no silent infinite waits. The engine reports its
+        // own timeouts first; this fires only if nothing settles at all.
+        window.clearTimeout(watchdogRef.current);
+        watchdogRef.current = window.setTimeout(() => {
+          if (stateRef.current !== "connecting") return;
+          engineRef.current?.dispose();
+          engineRef.current = null;
+          setError("Taking too long — the voice server may be blocked on your network. Try another connection.");
+          setState("error");
+        }, 20_000);
+      }
     },
-    [lang, pushLine]
+    [lang, pushLine, clearWatchdog]
   );
 
   const toggleMute = useCallback(() => {
@@ -253,6 +287,7 @@ export function VoiceDemo() {
   }, []);
 
   const reset = useCallback(() => {
+    clearWatchdog();
     engineRef.current?.dispose();
     engineRef.current = null;
     setState("idle");
@@ -260,7 +295,8 @@ export function VoiceDemo() {
     setSeconds(0);
     setSummary(null);
     setError("");
-  }, []);
+    setStage(null);
+  }, [clearWatchdog]);
 
   return (
     <div className="demo-voice" data-call-state={state}>
@@ -300,7 +336,14 @@ export function VoiceDemo() {
               (previewMode
                 ? "Preview mode: a scripted exchange, no model connected."
                 : "Press Start to talk to the agent live. Your mic stays in your browser except for the call audio.")}
-            {state === "connecting" && "Opening a live session…"}
+            {state === "connecting" &&
+              (previewMode
+                ? "Preparing the scripted preview…"
+                : stage === "mic"
+                  ? "Mic ready · opening a live session…"
+                  : stage === "session"
+                    ? "Session opening · waiting for the voice server…"
+                    : "Getting a session token…")}
             {state === "live" && (muted ? "You're muted — the agent can't hear you." : "Speak naturally. The agent replies in real time.")}
             {state === "ended" && summary && `Call lasted ${fmtClock(summary.seconds)} · ${summary.turns} turns.`}
             {state === "error" && error}
@@ -362,15 +405,26 @@ export function VoiceDemo() {
                 >
                   {muted ? <MicOff className="bk-voice-btn-icon" /> : <Mic className="bk-voice-btn-icon" />}
                 </button>
-                <button
-                  type="button"
-                  className="bk-voice-round bk-voice-round--end"
-                  onClick={end}
-                  disabled={state !== "live"}
-                  aria-label="End call"
-                >
-                  <PhoneOff className="bk-voice-btn-icon" />
-                </button>
+                {state === "live" ? (
+                  <button
+                    type="button"
+                    className="bk-voice-round bk-voice-round--end"
+                    onClick={end}
+                    aria-label="End call"
+                  >
+                    <PhoneOff className="bk-voice-btn-icon" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="bk-voice-round bk-voice-round--end"
+                    onClick={reset}
+                    aria-label="Cancel call"
+                    title="Cancel"
+                  >
+                    <PhoneOff className="bk-voice-btn-icon" />
+                  </button>
+                )}
               </>
             )}
           </div>

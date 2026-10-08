@@ -20,6 +20,9 @@ const MODEL = "models/gemini-3.8-live";
 const VOICE = "Puck";
 const INPUT_RATE = 16000;
 const OUTPUT_RATE = 24000;
+const MINT_TIMEOUT_MS = 15_000;
+const WS_OPEN_TIMEOUT_MS = 10_000;
+const MAX_ATTEMPTS = 2; // initial try + one retry on silent WS stall
 
 const INSTRUCTIONS: Record<Lang, string> = {
   en: "You are a friendly voice assistant on Rahmad Rizki's portfolio demo. Speak English. Keep replies short and conversational — one or two sentences, spoken style, no lists, no URLs, no markdown. You are a preview of the Channelflow voice agent and can chat about anything. Never claim to complete real bookings or take real actions; this demo has no backend.",
@@ -98,6 +101,11 @@ type ServerMessage = {
   goAway?: { timeLeft?: string };
 };
 
+/** A silent stall (no open, no error, no close) — the only failure worth retrying. */
+class StallError extends Error {}
+
+/* Reports a terminal failure exactly once, then cleans up. Sockets that
+   close afterwards stay silent via the failed flag. */
 function chunkToBase64(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
   let s = "";
@@ -130,20 +138,44 @@ export class GeminiVoiceEngine implements VoiceEngine {
   private startedAt = 0;
   private muted = false;
   private finished = false;
+  private failed = false; // terminal failure already reported; sockets closing after this stay silent
+  private openTimer = 0;
+  private epoch = 0; // bumped per attempt; stale sockets from a previous attempt stay silent
   private raf = 0;
   private freq: Uint8Array | null = null;
 
   constructor(private events: VoiceEngineEvents) {}
 
+  private stage(stage: "token" | "mic" | "session") {
+    this.events.onStage?.(stage);
+  }
+
   async start(lang: Lang) {
     this.turns = 0;
     this.startedAt = Date.now();
     try {
-      const token = await this.mintToken(lang);
-      await this.openSocket(token, lang);
+      // A fresh single-use token per attempt (a stalled attempt may have
+      // consumed the previous one).
+      let lastError: unknown = null;
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        if (this.finished) return;
+        try {
+          this.stage("token");
+          const token = await this.mintToken(lang);
+          this.stage("mic");
+          await this.openSocket(token, lang);
+          return; // openSocket resolves once the socket is open; setupComplete arrives via onmessage
+        } catch (error) {
+          lastError = error;
+          this.teardownSocket();
+          // Only silent stalls are retried; explicit refusals (mic blocked,
+          // rate limit) fail immediately.
+          if (!(error instanceof StallError) || attempt === MAX_ATTEMPTS) throw error;
+        }
+      }
+      throw lastError;
     } catch (error) {
-      this.events.onError(error instanceof Error ? error.message : "Could not start a live session.");
-      this.cleanup();
+      this.fail(error instanceof Error ? error.message : "Could not start a live session.");
     }
   }
 
@@ -164,11 +196,20 @@ export class GeminiVoiceEngine implements VoiceEngine {
   }
 
   private async mintToken(lang: Lang): Promise<string> {
-    const res = await fetch("/api/voice/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ lang }),
-    });
+    let res: Response;
+    try {
+      res = await fetch("/api/voice/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lang }),
+        signal: AbortSignal.timeout(MINT_TIMEOUT_MS),
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "TimeoutError") {
+        throw new Error("Session request timed out. Please try again.");
+      }
+      throw new Error("Could not reach the session server. Check your connection and try again.");
+    }
     if (res.status === 429) {
       throw new Error("Demo limit reached — 5 calls per hour. Please try again later.");
     }
@@ -178,17 +219,21 @@ export class GeminiVoiceEngine implements VoiceEngine {
     return data.token;
   }
 
-  private async openSocket(token: string, lang: Lang) {
+  private async openSocket(token: string, lang: Lang): Promise<void> {
+    const myEpoch = ++this.epoch;
+    const stale = () => myEpoch !== this.epoch;
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
       throw new Error("Microphone blocked — allow mic access and try again.");
     }
+    if (stale() || this.finished) throw new Error("Call cancelled.");
 
     this.ctx = new AudioContext();
     await this.ctx.audioWorklet.addModule(
       URL.createObjectURL(new Blob([WORKLETS], { type: "application/javascript" }))
     );
+    if (stale() || this.finished) throw new Error("Call cancelled.");
 
     // Mic -> 16 kHz capture -> socket
     const src = this.ctx.createMediaStreamSource(this.stream);
@@ -210,45 +255,87 @@ export class GeminiVoiceEngine implements VoiceEngine {
     this.analyser.connect(this.ctx.destination);
     this.meter();
 
-    const ws = new WebSocket(WS_URL + encodeURIComponent(token));
-    this.ws = ws;
-    ws.onopen = () => {
-      // Mirrors the locked setup minted server-side (the token's config wins;
-      // this copy keeps the handshake valid if the API ever merges instead).
-      this.send({
-        setup: {
-          model: MODEL,
-          generationConfig: {
-            responseModalities: ["AUDIO"],
-            speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE } } },
-          },
-          systemInstruction: { parts: [{ text: INSTRUCTIONS[lang] }] },
-          inputAudioTranscription: {},
-          outputAudioTranscription: {},
-          sessionResumption: {},
-        },
-      });
-    };
-    ws.onmessage = (ev) => {
-      try {
-        this.onMessage(JSON.parse(ev.data as string) as ServerMessage);
-      } catch {
-        /* ignore malformed frames */
-      }
-    };
-    ws.onerror = () => {
-      if (!this.finished) {
-        this.events.onError("Lost the live connection. Check your network and try again.");
-        this.finish();
-      }
-    };
-    ws.onclose = () => {
-      if (!this.finished && this.startedAt > 0 && this.ready) this.finish();
-      else if (!this.finished && !this.ready) {
-        this.events.onError("The live session closed before it started. Please try again.");
-        this.cleanup();
-      }
-    };
+    this.stage("session");
+    await new Promise<void>((resolve, reject) => {
+      const ws = new WebSocket(WS_URL + encodeURIComponent(token));
+      this.ws = ws;
+      // Google frames server messages as binary: without this they arrive
+      // as Blobs, JSON.parse silently fails, and setupComplete is missed.
+      ws.binaryType = "arraybuffer";
+      const clear = () => window.clearTimeout(this.openTimer);
+      // A network blackhole (dropped packets, no refusal) fires neither
+      // onopen nor onerror — without this the UI waits forever.
+      this.openTimer = window.setTimeout(() => {
+        if (stale()) return;
+        try {
+          ws.close();
+        } catch {
+          /* already gone */
+        }
+        reject(
+          new StallError(
+            "Voice server unreachable — your network may be blocking it. Try another connection."
+          )
+        );
+      }, WS_OPEN_TIMEOUT_MS);
+      ws.onopen = () => {
+        if (stale()) return;
+        clear();
+        // Sent DIRECTLY, never via send(): send() queues everything until
+        // setupComplete arrives, and setupComplete only arrives after the
+        // setup is sent — queueing it deadlocks the session forever.
+        ws.send(
+          JSON.stringify({
+            setup: {
+              model: MODEL,
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: VOICE } } },
+              },
+              systemInstruction: { parts: [{ text: INSTRUCTIONS[lang] }] },
+              inputAudioTranscription: {},
+              outputAudioTranscription: {},
+              sessionResumption: {},
+            },
+          })
+        );
+        resolve();
+      };
+      ws.onmessage = (ev) => {
+        if (stale()) return;
+        try {
+          const text =
+            typeof ev.data === "string" ? ev.data : new TextDecoder().decode(ev.data as ArrayBuffer);
+          this.onMessage(JSON.parse(text) as ServerMessage);
+        } catch {
+          /* ignore malformed frames */
+        }
+      };
+      ws.onerror = () => {
+        if (stale() || this.finished || this.failed) return;
+        clear();
+        this.fail("Lost the live connection. Check your network and try again.");
+      };
+      ws.onclose = () => {
+        if (stale() || this.finished || this.failed) return;
+        clear();
+        if (this.ready && this.startedAt > 0) this.finish();
+        else this.fail("The live session closed before it started. Please try again.");
+      };
+    });
+  }
+
+  private fail(message: string) {
+    if (this.failed || this.finished) return;
+    this.failed = true;
+    this.events.onError(message);
+    this.cleanup();
+  }
+
+  /** Between retry attempts: drop the dead attempt's resources and silence it. */
+  private teardownSocket() {
+    this.epoch += 1;
+    this.cleanup();
   }
 
   private send(message: Record<string, unknown>) {
@@ -261,6 +348,7 @@ export class GeminiVoiceEngine implements VoiceEngine {
     if (message.setupComplete) {
       this.ready = true;
       for (const data of this.queue.splice(0)) this.ws?.send(data);
+      this.events.onReady();
       return;
     }
     const content = message.serverContent;
@@ -319,6 +407,7 @@ export class GeminiVoiceEngine implements VoiceEngine {
 
   private cleanup() {
     cancelAnimationFrame(this.raf);
+    window.clearTimeout(this.openTimer);
     try {
       this.ws?.close();
     } catch {
