@@ -76,6 +76,27 @@ Two constraints that are easy to break:
   reads the project. Cloudflare deprecated next-on-pages in favour of the
   OpenNext adapter, so this is a stay of execution, not a fix.
 
+## CI: merge only on green
+
+`.github/workflows/ci.yml` runs on every PR (and every push except
+resume-only ones): `build-test` (`npm ci` → `npm run build` → `npm test`)
+then `audit` (Playwright chromium + dev server + `npm run demo:audit`).
+Branch protection on `main` requires both checks plus a PR — a red CI locks
+the merge, and only `main` auto-deploys, so production only receives green
+code. Normal flow is PR → green → merge → auto-deploy; direct pushes are for
+emergencies only (the owner is on the bypass list).
+
+Two things to keep in sync:
+
+- The audit job installs `playwright@1.64` for its browser — that minor
+  version must match the `playwright-core` devDependency when bumping it
+  (core ships no browser; the downloaded chromium in `~/.cache/ms-playwright`
+  is auto-discovered only when the versions agree).
+- The sync bot pushes via `RESUME_PAT` (fine-grained PAT, contents:write),
+  because `GITHUB_TOKEN` cannot bypass branch protection. Its pushes touch
+  only `content/resume.json`, which `ci.yml` ignores via `paths-ignore` —
+  data-only changes deploy without burning an 8-minute audit.
+
 ## The chatbot
 
 Visitors ask questions; `app/api/chat/route.ts` answers them from
