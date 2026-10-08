@@ -11,6 +11,7 @@ const navLinks = [
   { href: "#experience", label: "Experience" },
   { href: "#certifications", label: "Certifications" },
   { href: "#projects", label: "Projects" },
+  { href: "/demos", label: "Demos" },
   { href: "#contact", label: "Contact" },
 ]
 
@@ -18,8 +19,11 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("")
+  // Di-set setelah mount agar sama antara SSR dan client (hindari hydration mismatch).
+  const [isDemosPage, setIsDemosPage] = useState(false)
 
   useEffect(() => {
+    setIsDemosPage(window.location.pathname.startsWith("/demos"))
     let ticking = false
 
     // Batch DOM reads into one rAF callback per frame to avoid layout
@@ -53,6 +57,11 @@ export function Navbar() {
 
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false)
+    if (href.startsWith("/") && !href.startsWith("/#")) {
+      // Route link (mis. /demos) — pindah halaman, bukan scroll section.
+      window.location.href = href
+      return
+    }
     const element = document.querySelector(href)
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
@@ -61,6 +70,10 @@ export function Navbar() {
       window.location.href = `/${href}`
     }
   }
+
+  // Highlight "Demos" saat pengunjung ada di halaman demo mana pun.
+  const isActive = (href: string) =>
+    href === "/demos" ? isDemosPage : activeSection === href.substring(1)
 
   return (
     <>
@@ -119,13 +132,13 @@ export function Navbar() {
                   transition={{ delay: index * 0.1 }}
                   className={cn(
                     "relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg",
-                    activeSection === link.href.substring(1)
+                    isActive(link.href)
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {link.label}
-                  {activeSection === link.href.substring(1) && (
+                  {isActive(link.href) && (
                     <m.div
                       layoutId="activeSection"
                       className="absolute inset-0 bg-primary/10 rounded-lg -z-10"
@@ -194,7 +207,7 @@ export function Navbar() {
                     transition={{ delay: index * 0.1 }}
                     className={cn(
                       "px-4 py-3 text-lg font-medium rounded-lg transition-colors",
-                      activeSection === link.href.substring(1)
+                      isActive(link.href)
                         ? "text-primary bg-primary/10"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                     )}

@@ -4,7 +4,7 @@ import { ChannelflowClient } from "./client";
 export const metadata: Metadata = {
   title: "Channelflow Demo | Rahmad Rizki",
   description:
-    "Interactive mock of the Channelflow omnichannel AI agent: inbox reply pipeline, booking wizard, and staff mobile board.",
+    "Interactive mock of the Channelflow omnichannel AI agent: inbox reply pipeline, booking wizard, staff mobile board, and a live voice call.",
 };
 
 export default function ChannelflowDemoPage() {

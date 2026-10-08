@@ -132,6 +132,32 @@ await page.waitForTimeout(400);
 check("month grid visible", await page.getByText("Each day shows the total guests booked.").isVisible());
 await page.screenshot({ path: `${SHOT}mobile-month.png` });
 
+// ---------- voice call tab (scripted preview via ?voice=preview: no mic, no quota) ----------
+await page.goto(`${BASE}/demos/channelflow?voice=preview`, { waitUntil: "networkidle" });
+await page.getByRole("tab", { name: "Voice", exact: true }).click();
+await page.waitForTimeout(600);
+check("voice ready visible", await page.getByText("Preview mode: a scripted exchange, no model connected.").isVisible());
+check("voice preview badge", await page.getByText("Preview", { exact: true }).isVisible());
+await page.screenshot({ path: `${SHOT}voice-idle.png` });
+await page.getByRole("button", { name: "Start call" }).click();
+await page.waitForTimeout(2000);
+check("voice connecting->live", await page.getByText(/Live · 00:0/).isVisible());
+await page.waitForTimeout(6000);
+check("voice transcript flows", await page.getByText("Are you open this Friday evening?").isVisible());
+check("voice orb visible", await page.locator(".bk-voice-orb").isVisible());
+await page.screenshot({ path: `${SHOT}voice-live.png` });
+await page.getByRole("button", { name: "End call" }).click();
+await page.waitForTimeout(400);
+check("voice ended summary", await page.getByText(/Call lasted/).isVisible());
+await page.screenshot({ path: `${SHOT}voice-ended.png` });
+
+// ---------- voice token route (validation only: never mint in audit, quota is 5/hour) ----------
+const badToken = await page.request.post(`${BASE}/api/voice/token`, {
+  data: "not-json",
+  headers: { "Content-Type": "application/json" },
+});
+check("voice token rejects bad body", badToken.status() === 400);
+
 // ---------- peopleos (sidebar shell; default = HR overview) ----------
 await page.goto(`${BASE}/demos/peopleos`, { waitUntil: "networkidle" });
 await page.waitForTimeout(800);

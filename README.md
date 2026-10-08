@@ -58,7 +58,9 @@ approvals/schedule/hiring flows, and the Unicorn CMS page-builder playground
 (click to add, drag to reorder, switch devices).
 
 These are rebuilt front-end replicas with fictional data — the production code
-stays private, but the interactions are the real ones. They are covered by a
+stays private, but the interactions are the real ones. The one exception is
+the Voice tab: a live call with the agent over Gemini Live (single-use token
+per call, 5 calls per hour). They are covered by a
 Playwright audit (`npm run demo:audit`, needs `npm run dev` on :3000) that fails
 on console errors or broken flows.
 

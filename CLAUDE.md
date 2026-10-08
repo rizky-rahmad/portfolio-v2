@@ -145,6 +145,17 @@ dev server up run `npm run demo:audit` (`scripts/demo-audit.mjs`, needs
 one by one. The audit fails on console errors, missing selectors, or broken
 flows. Screenshots are gitignored regeneration output — don't commit them.
 
+The Voice tab (`components/demos/channelflow/voice-demo.tsx`) is live, not a
+mock: the browser opens a WebSocket straight to Gemini Live
+(`gemini-3.8-live`, voice Puck) with a single-use ephemeral token minted by
+`POST /api/voice/token` (edge, 5 sessions/IP/hour via Upstash, persona + voice
+locked inside the token). `GEMINI_API_KEY` never leaves the server. Call logic
+lives behind the `VoiceEngine` interface (`gemini-voice.ts`); the scripted
+`SimulatedVoiceEngine` remains as fallback and for audit (`?voice=preview`
+forces it — the audit must never mint real tokens, quota is 5/hour).
+Playwright can't do mic audio, so audit covers the preview path + route
+validation only; real calls need manual QA with a mic.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and fill it in. Without these the site still
