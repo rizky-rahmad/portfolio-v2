@@ -1,0 +1,19 @@
+/* Scoped theme for the mobile staff-app replica (warm cream, brown brand).
+   Tokens measured from the real app's src/theme.ts. */
+.demo-mobile {
+  --mb-bg: #FCF4E9;
+  --mb-elevated: #F6EBDA;
+  --mb-card: #FFFBF3;
+  --mb-border: #E8D9C3;
+  --mb-accent: #3E2008;
+  --mb-accent-text: #8A5A22;
+  --mb-text: #2E1B0D;
+  --mb-muted: #6A5240;
+  --mb-faint: #96806C;
+  --mb-danger: #A93B2A;
+  background: var(--mb-bg);
+  color: var(--mb-text);
+}
+.demo-mobile .cf-mono {
+  font-family: var(--font-demo-mono), ui-monospace, Menlo, monospace;
+}

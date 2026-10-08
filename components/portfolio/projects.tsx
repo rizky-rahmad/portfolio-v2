@@ -3,7 +3,7 @@
 import { m } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { ExternalLink, Github, Layers } from "lucide-react";
+import { ExternalLink, Github, Layers, FlaskConical } from "lucide-react";
 import Image from "next/image";
 
 // Tambahan Tipe Data untuk memperbaiki error TypeScript
@@ -13,6 +13,7 @@ type FeaturedProject = {
   image: string;
   liveUrl?: string;
   githubUrl?: string;
+  demoUrl?: string;
   stack: string[];
   featured: boolean;
   label?: string;
@@ -25,6 +26,7 @@ const featuredProjects: FeaturedProject[] = [
     description:
       "One inbox for WhatsApp, Instagram, Email and TikTok where an AI agent answers customers in their own language and completes bookings end to end — ~3,500 bookings and ~17,700 messages a month in production. Sensitive or low-confidence chats go to a human, a second model verifies before the agent continues, and a queue with retries means a crash never leaves a customer unanswered.",
     image: "/images/projects/channelflow.webp",
+    demoUrl: "/demos/channelflow",
     stack: ["Next.js", "Hono", "Mastra", "BullMQ", "PostgreSQL", "Drizzle", "Expo", "LiveKit"],
     featured: true,
     label: "Team Project · PT Unicorn",
@@ -34,6 +36,7 @@ const featuredProjects: FeaturedProject[] = [
     description:
       "One HR platform for hiring, training, shift scheduling, GPS clock-in and leave, used by 154 employees on web and Android. My focus: the mobile app and the multi-step leave approval flow.",
     image: "/images/projects/peopleos.webp",
+    demoUrl: "/demos/peopleos",
     stack: ["React", "Express", "PostgreSQL", "Drizzle", "React Native (Expo)"],
     featured: true,
     label: "Team Project · PT Unicorn",
@@ -43,6 +46,7 @@ const featuredProjects: FeaturedProject[] = [
     description:
       "A drag-and-drop page builder for every brand site: 20+ elements, per-device layouts, version history with restore, SEO and tracking — covered by end-to-end tests.",
     image: "/images/projects/unicorn-cms.webp",
+    demoUrl: "/demos/unicorn-cms",
     stack: ["Next.js", "Hono", "PostgreSQL", "Drizzle", "Tiptap", "Playwright"],
     featured: true,
     label: "Team Project · PT Unicorn",
@@ -176,6 +180,15 @@ export function Projects() {
 
                     {/* Overlay links */}
                     <div className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {project.demoUrl && (
+                        <a
+                          href={project.demoUrl}
+                          aria-label={`Try the ${project.title} interactive demo`}
+                          className="p-3 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                        >
+                          <FlaskConical className="w-5 h-5" />
+                        </a>
+                      )}
                       {project.liveUrl && (
                         <a
                           href={project.liveUrl}
@@ -233,7 +246,16 @@ export function Projects() {
                   </div>
 
                   {/* Links */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-wrap">
+                    {project.demoUrl && (
+                      <a
+                        href={project.demoUrl}
+                        className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
+                      >
+                        <FlaskConical className="w-4 h-4" />
+                        <span>Interactive Demo</span>
+                      </a>
+                    )}
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}

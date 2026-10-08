@@ -1,0 +1,5 @@
+/* Scoped helpers for the Channelflow inbox replica.
+   Mono stack uses --font-demo-mono set by next/font on the demo route. */
+.cf-mono {
+  font-family: var(--font-demo-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}

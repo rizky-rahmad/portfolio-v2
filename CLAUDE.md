@@ -109,6 +109,42 @@ Gemini is called over plain REST, not `@google/generative-ai`. That SDK is
 end-of-life and has no `thinkingConfig`, and disabling thinking is what makes
 replies land in ~2s instead of ~6s.
 
+## Interactive demos (`app/demos/*`)
+
+Each featured PT Unicorn project has a fully interactive mock at `/demos`,
+linked from the Projects section via `demoUrl` ("Interactive Demo",
+`FlaskConical` icon). These are **rebuilt UI replicas with local state and
+fictional data — no backend, no DB, no production code**. Fictional names
+(Balinese where fitting) keep real customer/employee data out of the portfolio.
+
+| Route | Source in `/Users/rizky/works/` | What it mocks |
+|---|---|---|
+| `/demos/channelflow` | `channelflow` (web inbox + booking + MobileApps) | AI Inbox (draft approve, human handoff), booking wizard with peak-hour dialog, staff mobile board (List/Day/Month) |
+| `/demos/peopleos` | `PeopleAndCultureApps` | HR overview dashboard, approvals inbox (2-step leave flow), schedule + GPS clock-in ledger, hiring candidates with stage drawer |
+| `/demos/unicorn-cms` | `unicorn-cms/docs/plan-overview.html` | The `#pg` editor playground only (click-add, drag reorder, per-device order, undo/redo) — not the admin |
+
+Conventions that keep the mocks faithful and the homepage safe:
+
+- **Verbatim copy.** Labels, toasts, and empty states are copied word-for-word
+  from the production source, not paraphrased. When the replica drifts from the
+  original, port the original component/token instead of approximating.
+- **Scoped CSS per demo** (`.bk-`, `.pos-`, `.ucms-`/`.pg-`) so demo styles can
+  never leak into the homepage. Exact brand tokens live in the demo CSS files.
+- **Per-route fonts** via `next/font` CSS variables (`--font-demo-mono`,
+  `--font-demo-mont`) scoped to the demo `<main>`, never global.
+- **Heavy panels load via `next/dynamic` with `ssr: false`.**
+- Mock data lives in `content/demos/*`; shell/chrome in
+  `components/demos/demo-shell.tsx`. Navbar anchor links fall back to
+  `window.location.href = "/..."` when the target section isn't on the page.
+- Voice-agent demo is deliberately deferred (noted in the Channelflow demo
+  description); don't re-add a Voice tab without being asked.
+
+Verification rule: after touching a demo, run `npm run build`, then with the
+dev server up run `npm run demo:audit` (`scripts/demo-audit.mjs`, needs
+`npm run dev` on :3000), and read the screenshots in `scripts/screenshots/`
+one by one. The audit fails on console errors, missing selectors, or broken
+flows. Screenshots are gitignored regeneration output — don't commit them.
+
 ## Environment
 
 Copy `.env.example` to `.env.local` and fill it in. Without these the site still
@@ -148,6 +184,7 @@ Cloudflare dashboard would make it 100 at the cost of losing analytics.
 
 ## Current focus
 
-Content updates and performance/SEO. Recent commits were LCP work — check the
+Content updates, interactive project demos (`app/demos/*`), and
+performance/SEO. Recent commits were LCP work — check the
 build output and Lighthouse before and after anything that touches the hero,
 fonts, or above-the-fold images.

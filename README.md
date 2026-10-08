@@ -49,6 +49,19 @@ a CSS animation.
 The remaining fixes came from reading the LCP breakdown instead of the summary:
 render-blocking stylesheets accounted for most of what was left.
 
+### Try the work, not just read about it
+
+Each featured project has an **Interactive Demo** link that opens a working mock
+at `/demos`: the Channelflow AI inbox (approve an AI draft, watch a handoff),
+the booking wizard, the staff mobile board, the PeopleOS HR dashboard with its
+approvals/schedule/hiring flows, and the Unicorn CMS page-builder playground
+(click to add, drag to reorder, switch devices).
+
+These are rebuilt front-end replicas with fictional data — the production code
+stays private, but the interactions are the real ones. They are covered by a
+Playwright audit (`npm run demo:audit`, needs `npm run dev` on :3000) that fails
+on console errors or broken flows.
+
 ### Resilience where it actually failed
 
 The chatbot once went down completely because its Upstash Redis database had
@@ -71,8 +84,9 @@ npm run dev
 ```
 
 The site renders without any environment variables; only the chat widget needs
-them. `npm run resume:sync` re-transcribes the resume, and `npm test` runs the
-unit tests.
+them. `npm run resume:sync` re-transcribes the resume, `npm test` runs the
+unit tests, and `npm run demo:audit` (with the dev server running) checks the
+interactive demos.
 
 ## Contact
 

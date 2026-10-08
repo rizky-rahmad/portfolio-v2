@@ -56,6 +56,9 @@ export function Navbar() {
     const element = document.querySelector(href)
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
+    } else if (href.startsWith("#")) {
+      // Dipakai dari halaman demo (/demos/*) — section hanya ada di homepage.
+      window.location.href = `/${href}`
     }
   }
 
@@ -79,7 +82,11 @@ export function Navbar() {
               href="#"
               onClick={(e) => {
                 e.preventDefault()
-                window.scrollTo({ top: 0, behavior: "smooth" })
+                if (window.location.pathname !== "/") {
+                  window.location.href = "/"
+                } else {
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }
               }}
               className="group flex items-center gap-2"
               whileHover={{ scale: 1.02 }}
