@@ -6,10 +6,11 @@ import { GeminiVoiceEngine } from "./gemini-voice";
 import "./voice.css";
 
 /* ------------------------------------------------------------------ */
-/* Voice tab UI. The live Qwen WebRTC wiring plugs in later: everything */
-/* call-related goes through the VoiceEngine interface below. Right    */
-/* now only SimulatedVoiceEngine exists, clearly labelled PREVIEW, so  */
-/* the layout, states, orb, transcript and controls can be reviewed.   */
+/* Voice tab UI. Everything call-related goes through the VoiceEngine  */
+/* interface below: GeminiVoiceEngine (live, via gemini-voice.ts) or   */
+/* SimulatedVoiceEngine (scripted preview, clearly labelled PREVIEW),  */
+/* so the layout, states, waveform, transcript and controls can be     */
+/* reviewed without touching call logic.                               */
 /* ------------------------------------------------------------------ */
 
 type CallState = "idle" | "connecting" | "live" | "ended" | "error";
