@@ -26,7 +26,8 @@ export type VoiceStage = "token" | "mic" | "session";
 
 export type VoiceEngineEvents = {
   onLine: (line: Omit<VoiceLine, "id" | "at">) => void;
-  onLevel: (level: number) => void; // 0..1 remote audio level for the orb
+  onLevel: (level: number) => void; // 0..1 agent audio level for the waveform
+  onMicLevel: (level: number) => void; // 0..1 caller mic level for the waveform
   /** The session is ready: mic streaming (live) or script running (preview). */
   onReady: () => void;
   /** Live engine only: which connecting stage was reached (for staged hints). */
@@ -57,25 +58,46 @@ class SimulatedVoiceEngine implements VoiceEngine {
   private turns = 0;
   private startedAt = 0;
   private disposed = false;
+  private micHotUntil = 0;
   constructor(private events: VoiceEngineEvents) {}
 
   start() {
     this.turns = 0;
     this.startedAt = Date.now();
-    // Gentle fake level movement for the orb.
+    // Gentle fake level movement for the waveform.
     const tick = () => {
       if (this.disposed) return;
       this.events.onLevel(0.25 + Math.random() * 0.6);
       this.timers.push(setTimeout(tick, 220));
     };
     tick();
+    // The "caller's" mic runs quiet except around their own lines.
+    const micTick = () => {
+      if (this.disposed) return;
+      const hot = Date.now() < this.micHotUntil;
+      this.events.onMicLevel(hot ? 0.45 + Math.random() * 0.4 : 0.06 + Math.random() * 0.16);
+      this.timers.push(setTimeout(micTick, 220));
+    };
+    micTick();
     let delay = 0;
     for (const step of PREVIEW_SCRIPT) {
       delay += step.afterMs;
+      if (step.who === "you") {
+        // Heat the mic shortly before the caller "speaks".
+        const at = delay;
+        this.timers.push(
+          setTimeout(() => {
+            if (!this.disposed) this.micHotUntil = Date.now() + 2600;
+          }, Math.max(0, at - 1400))
+        );
+      }
       this.timers.push(
         setTimeout(() => {
           if (this.disposed) return;
-          if (step.who === "you") this.turns += 1;
+          if (step.who === "you") {
+            this.turns += 1;
+            this.micHotUntil = Date.now() + 1800;
+          }
           this.events.onLine({ who: step.who, text: step.text });
         }, delay)
       );
@@ -110,16 +132,31 @@ function fmtClock(total: number) {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-function stamp() {
-  const d = new Date();
-  return `${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
+/* Call-relative timestamp (m:ss since onReady) — distinct from wall-clock. */
+function fmtRel(ms: number) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
-/* Animated orb driven by remote audio level (0..1). Canvas, rAF, cleanup. */
-function Orb({ level, live }: { level: number; live: boolean }) {
+/* Dual waveform driven by agent + mic levels (0..1). Canvas, rAF, cleanup.
+   Top row = agent voice, bottom row = caller mic. Levels arrive via refs so
+   the 15 Hz meter never re-renders React; only live/muted re-subscribe. */
+function Waveform({
+  agent,
+  mic,
+  live,
+  muted,
+}: {
+  agent: number;
+  mic: number;
+  live: boolean;
+  muted: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const levelRef = useRef(0);
-  levelRef.current = live ? level : 0;
+  const agentRef = useRef(0);
+  const micRef = useRef(0);
+  agentRef.current = live ? agent : 0;
+  micRef.current = live && !muted ? mic : 0;
 
   useEffect(() => {
     const canvas = ref.current;
@@ -127,44 +164,51 @@ function Orb({ level, live }: { level: number; live: boolean }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const agentColor = live ? "#34d399" : "#8b5cf6";
+    const micColor = muted ? "#475569" : "#a78bfa";
     let raf = 0;
     const t0 = performance.now();
+    const W = canvas.width;
+    const H = canvas.height;
+    const N = 56;
+    const gap = W / N;
+    const bw = Math.max(2, gap * 0.55);
+    const rows = [
+      { y: H * 0.28, max: H * 0.22 },
+      { y: H * 0.76, max: H * 0.22 },
+    ];
     const draw = (now: number) => {
-      const w = canvas.width;
-      const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
       const t = (now - t0) / 1000;
-      const amp = levelRef.current;
-      ctx.clearRect(0, 0, w, h);
-      for (let i = 4; i >= 1; i--) {
-        const pulse = reduced ? 0 : Math.sin(t * 2.2 - i * 0.7) * 4 * (0.3 + amp);
-        const r = 26 + i * 17 + amp * 26 + pulse;
-        const alpha = 0.1 + (5 - i) * 0.09 + amp * 0.12;
-        const grad = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r);
-        grad.addColorStop(0, `rgba(139, 92, 246, ${alpha + 0.25})`);
-        grad.addColorStop(1, "rgba(139, 92, 246, 0)");
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      // Core
-      const core = ctx.createRadialGradient(cx - 8, cy - 10, 4, cx, cy, 30);
-      core.addColorStop(0, "#c4b5fd");
-      core.addColorStop(0.55, "#8b5cf6");
-      core.addColorStop(1, "#5b21b6");
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 26 + amp * 8, 0, Math.PI * 2);
-      ctx.fill();
+      const levels = [agentRef.current, micRef.current];
+      ctx.clearRect(0, 0, W, H);
+      rows.forEach((row, r) => {
+        const lvl = Math.max(0, Math.min(1, levels[r] ?? 0));
+        ctx.fillStyle = r === 0 ? agentColor : micColor;
+        for (let i = 0; i < N; i++) {
+          const wobble = reduced ? 0.7 : 0.35 + 0.65 * Math.abs(Math.sin(t * 3.2 + i * 0.5 + r * 2.1));
+          const h = Math.max(2, lvl * row.max * wobble + 1.5);
+          const x = i * gap + (gap - bw) / 2;
+          ctx.globalAlpha = 0.35 + 0.65 * (h / (row.max + 1.5));
+          ctx.fillRect(x, row.y - h / 2, bw, h);
+        }
+        ctx.globalAlpha = 1;
+      });
       raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [live, muted]);
 
-  return <canvas ref={ref} width={240} height={240} className="bk-voice-orb" aria-hidden="true" />;
+  return (
+    <canvas
+      ref={ref}
+      width={320}
+      height={148}
+      className="bk-voice-wave"
+      role="img"
+      aria-label="Live audio levels, agent on top and your microphone below"
+    />
+  );
 }
 
 export function VoiceDemo() {
@@ -173,6 +217,7 @@ export function VoiceDemo() {
   const [muted, setMuted] = useState(false);
   const [lines, setLines] = useState<VoiceLine[]>([]);
   const [level, setLevel] = useState(0);
+  const [micLevel, setMicLevel] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [summary, setSummary] = useState<{ seconds: number; turns: number } | null>(null);
   const [error, setError] = useState("");
@@ -181,6 +226,7 @@ export function VoiceDemo() {
   const engineRef = useRef<VoiceEngine | null>(null);
   const watchdogRef = useRef(0);
   const idRef = useRef(0);
+  const startedAtRef = useRef(0); // set on onReady; line timestamps are relative to it
   const transcriptRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -216,7 +262,10 @@ export function VoiceDemo() {
 
   const pushLine = useCallback((line: Omit<VoiceLine, "id" | "at">) => {
     idRef.current += 1;
-    setLines((prev) => [...prev, { ...line, id: idRef.current, at: stamp() }]);
+    setLines((prev) => [
+      ...prev,
+      { ...line, id: idRef.current, at: fmtRel(Date.now() - startedAtRef.current) },
+    ]);
   }, []);
 
   const clearWatchdog = useCallback(() => {
@@ -229,6 +278,8 @@ export function VoiceDemo() {
       setError("");
       setLines([]);
       setSeconds(0);
+      setLevel(0);
+      setMicLevel(0);
       setSummary(null);
       setMuted(false);
       setPreviewMode(preview);
@@ -237,9 +288,11 @@ export function VoiceDemo() {
       const events: VoiceEngineEvents = {
         onLine: pushLine,
         onLevel: setLevel,
+        onMicLevel: setMicLevel,
         onStage: setStage,
         onReady: () => {
           clearWatchdog();
+          startedAtRef.current = Date.now();
           if (stateRef.current === "connecting") setState("live");
         },
         onEnded: (s) => {
@@ -293,6 +346,8 @@ export function VoiceDemo() {
     setState("idle");
     setLines([]);
     setSeconds(0);
+    setLevel(0);
+    setMicLevel(0);
     setSummary(null);
     setError("");
     setStage(null);
@@ -328,26 +383,51 @@ export function VoiceDemo() {
             </span>
           </div>
 
-          <Orb level={level} live={state === "live"} />
+          <Waveform agent={level} mic={micLevel} live={state === "live"} muted={muted} />
+          <div className="bk-voice-legend" aria-hidden="true">
+            <span className="bk-voice-legend-item bk-voice-legend-item--agent">Agent</span>
+            <span className="bk-voice-legend-item bk-voice-legend-item--you">You</span>
+          </div>
 
-          <p className="bk-voice-model">Gemini Live · Puck</p>
-          <p className="bk-voice-hint">
-            {state === "idle" &&
-              (previewMode
-                ? "Preview mode: a scripted exchange, no model connected."
-                : "Press Start to talk to the agent live. Your mic stays in your browser except for the call audio.")}
-            {state === "connecting" &&
-              (previewMode
-                ? "Preparing the scripted preview…"
-                : stage === "mic"
-                  ? "Mic ready · opening a live session…"
-                  : stage === "session"
-                    ? "Session opening · waiting for the voice server…"
-                    : "Getting a session token…")}
-            {state === "live" && (muted ? "You're muted — the agent can't hear you." : "Speak naturally. The agent replies in real time.")}
-            {state === "ended" && summary && `Call lasted ${fmtClock(summary.seconds)} · ${summary.turns} turns.`}
-            {state === "error" && error}
+          <p className="bk-voice-model">Puck</p>
+          <p className="bk-voice-sub">
+            {previewMode ? "Scripted preview" : "Gemini Live"} ·{" "}
+            {lang === "en" ? "English" : "Indonesia"}
           </p>
+          {state === "ended" && summary ? (
+            <div className="bk-voice-recap">
+              <div className="bk-voice-recap-stats">
+                <span className="bk-voice-recap-stat">
+                  <strong>{fmtClock(summary.seconds)}</strong>Duration
+                </span>
+                <span className="bk-voice-recap-stat">
+                  <strong>{summary.turns}</strong>Turns
+                </span>
+              </div>
+              <p className="bk-voice-hint">
+                Call lasted {fmtClock(summary.seconds)} · {summary.turns}{" "}
+                {summary.turns === 1 ? "turn" : "turns"}.
+              </p>
+            </div>
+          ) : (
+            <p className="bk-voice-hint">
+              {state === "idle" &&
+                (previewMode
+                  ? "Preview mode: a scripted exchange, no model connected."
+                  : "Press Start to talk to the agent live. Your mic stays in your browser except for the call audio.")}
+              {state === "connecting" &&
+                (previewMode
+                  ? "Preparing the scripted preview…"
+                  : stage === "mic"
+                    ? "Mic ready · opening a live session…"
+                    : stage === "session"
+                      ? "Session opening · waiting for the voice server…"
+                      : "Getting a session token…")}
+              {state === "live" &&
+                (muted ? "You're muted — the agent can't hear you." : "Speak naturally. The agent replies in real time.")}
+              {state === "error" && error}
+            </p>
+          )}
 
           <div className="bk-voice-lang" role="group" aria-label="Agent language">
             <Languages className="bk-voice-lang-icon" />
@@ -433,14 +513,28 @@ export function VoiceDemo() {
 
         {/* Transcript panel */}
         <section className="bk-voice-script" aria-label="Live transcript">
-          <h3 className="bk-voice-script-title">Live transcript</h3>
+          <div className="bk-voice-script-head">
+            <h3 className="bk-voice-script-title">Live transcript</h3>
+            {state === "live" && (level > 0.3 || micLevel > 0.35) && (
+              <span className="bk-voice-speaking" aria-hidden="true">
+                <span className="bk-voice-speaking-dot" />
+                {micLevel > 0.35 ? "You're speaking" : "Agent speaking"}
+              </span>
+            )}
+          </div>
           <div className="bk-voice-lines" ref={transcriptRef} aria-live="polite">
             {lines.length === 0 && (
-              <p className="bk-voice-empty">
-                {state === "live" || state === "connecting"
-                  ? "Listening…"
-                  : "Transcript will appear here once the call starts."}
-              </p>
+              <div className="bk-voice-empty">
+                <Mic className="bk-voice-empty-icon" aria-hidden="true" />
+                <p>
+                  {state === "live" || state === "connecting"
+                    ? "Listening…"
+                    : "Your conversation will appear here once the call starts."}
+                </p>
+                {state !== "live" && state !== "connecting" && (
+                  <p className="bk-voice-empty-tip">Try asking about Rizky&apos;s experience.</p>
+                )}
+              </div>
             )}
             {lines.map((line) => (
               <div key={line.id} className={`bk-voice-line bk-voice-line--${line.who}`}>

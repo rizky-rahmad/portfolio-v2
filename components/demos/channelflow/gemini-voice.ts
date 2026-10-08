@@ -167,6 +167,7 @@ export class GeminiVoiceEngine implements VoiceEngine {
   private capture: AudioWorkletNode | null = null;
   private playback: AudioWorkletNode | null = null;
   private analyser: AnalyserNode | null = null;
+  private micAnalyser: AnalyserNode | null = null;
   private ready = false;
   private queue: string[] = [];
   private userBuf = "";
@@ -180,6 +181,8 @@ export class GeminiVoiceEngine implements VoiceEngine {
   private epoch = 0; // bumped per attempt; stale sockets from a previous attempt stay silent
   private raf = 0;
   private freq: Uint8Array | null = null;
+  private micFreq: Uint8Array | null = null;
+  private meterTick = 0;
 
   constructor(private events: VoiceEngineEvents) {}
 
@@ -272,8 +275,13 @@ export class GeminiVoiceEngine implements VoiceEngine {
     );
     if (stale() || this.finished) throw new Error("Call cancelled.");
 
-    // Mic -> 16 kHz capture -> socket
+    // Mic -> 16 kHz capture -> socket, with a pass-through tap so the UI
+    // can meter the caller's voice. AnalyserNode forwards audio untouched,
+    // so what reaches the socket is bit-identical.
     const src = this.ctx.createMediaStreamSource(this.stream);
+    this.micAnalyser = this.ctx.createAnalyser();
+    this.micAnalyser.fftSize = 256;
+    this.micFreq = new Uint8Array(this.micAnalyser.frequencyBinCount);
     this.capture = new AudioWorkletNode(this.ctx, "pcv-capture");
     this.capture.port.onmessage = ({ data }: { data: ArrayBuffer }) => {
       if (!this.ready || this.muted || this.finished) return;
@@ -281,9 +289,10 @@ export class GeminiVoiceEngine implements VoiceEngine {
         realtimeInput: { audio: { mimeType: `audio/pcm;rate=${INPUT_RATE}`, data: chunkToBase64(data) } },
       });
     };
-    src.connect(this.capture);
+    src.connect(this.micAnalyser);
+    this.micAnalyser.connect(this.capture);
 
-    // Socket audio 24 kHz -> playback -> analyser (orb) -> speakers
+    // Socket audio 24 kHz -> playback -> analyser (waveform) -> speakers
     this.playback = new AudioWorkletNode(this.ctx, "pcv-playback");
     this.analyser = this.ctx.createAnalyser();
     this.analyser.fftSize = 256;
@@ -440,10 +449,21 @@ export class GeminiVoiceEngine implements VoiceEngine {
   private meter() {
     const loop = () => {
       if (this.finished || !this.analyser || !this.freq) return;
-      this.analyser.getByteFrequencyData(this.freq);
-      let sum = 0;
-      for (let i = 0; i < this.freq.length; i++) sum += this.freq[i];
-      this.events.onLevel(Math.min(1, sum / this.freq.length / 90));
+      // ~15 Hz is plenty for a level meter; emitting every animation frame
+      // re-renders React 60x/sec (x2 analysers = 120 state updates/sec).
+      this.meterTick += 1;
+      if (this.meterTick % 4 === 0) {
+        this.analyser.getByteFrequencyData(this.freq);
+        let sum = 0;
+        for (let i = 0; i < this.freq.length; i++) sum += this.freq[i];
+        this.events.onLevel(Math.min(1, sum / this.freq.length / 90));
+        if (this.micAnalyser && this.micFreq) {
+          this.micAnalyser.getByteFrequencyData(this.micFreq);
+          let msum = 0;
+          for (let i = 0; i < this.micFreq.length; i++) msum += this.micFreq[i];
+          this.events.onMicLevel(Math.min(1, msum / this.micFreq.length / 90));
+        }
+      }
       this.raf = requestAnimationFrame(loop);
     };
     this.raf = requestAnimationFrame(loop);
@@ -472,9 +492,12 @@ export class GeminiVoiceEngine implements VoiceEngine {
     this.stream = null;
     this.capture?.disconnect();
     this.playback?.disconnect();
+    this.micAnalyser?.disconnect();
     this.capture = null;
     this.playback = null;
     this.analyser = null;
+    this.micAnalyser = null;
+    this.micFreq = null;
     void this.ctx?.close().catch(() => {});
     this.ctx = null;
     this.ready = false;

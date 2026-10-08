@@ -144,7 +144,7 @@ await page.waitForTimeout(2000);
 check("voice connecting->live", await page.getByText(/Live · 00:0/).isVisible());
 await page.waitForTimeout(6000);
 check("voice transcript flows", await page.getByText("Are you open this Friday evening?").isVisible());
-check("voice orb visible", await page.locator(".bk-voice-orb").isVisible());
+check("voice waveform visible", await page.locator(".bk-voice-wave").isVisible());
 await page.screenshot({ path: `${SHOT}voice-live.png` });
 await page.getByRole("button", { name: "End call" }).click();
 await page.waitForTimeout(400);
