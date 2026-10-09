@@ -1,11 +1,34 @@
-# Portfolio — Rahmad Rizki
+# Rizky — Portfolio, AI Assistant & Interactive Demos
 
 Personal portfolio site with an AI assistant that answers visitors' questions
-about my background, built on Next.js and deployed to Cloudflare.
+about my background, and working front-end replicas of the products I built —
+all running in the browser. Next.js on Cloudflare Pages.
 
-**[rizky-portfolio.pages.dev](https://rizky-portfolio.pages.dev/)**
+[![Live site](https://img.shields.io/badge/Live%20Site-rizky--portfolio.pages.dev-14b8a6?style=flat-square)](https://rizky-portfolio.pages.dev/)
+[![PageSpeed Mobile 98](https://img.shields.io/badge/PageSpeed%20Mobile-98-34d399?style=flat-square)](https://pagespeed.web.dev/analysis/https-rizky-portfolio-pages-dev/3739kdk2w9?form_factor=mobile)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini-8b5cf6?style=flat-square)](https://ai.google.dev/)
 
 ![The portfolio homepage](docs/preview.jpg)
+
+## Contents
+
+- [Try it](#try-it)
+- [An AI assistant that answers from my actual resume](#an-ai-assistant-that-answers-from-my-actual-resume)
+- [Performance treated as a measured problem](#performance-treated-as-a-measured-problem)
+- [Try the work, not just read about it](#try-the-work-not-just-read-about-it)
+- [Resilience where it actually failed](#resilience-where-it-actually-failed)
+- [Built with](#built-with)
+- [Running it locally](#running-it-locally)
+- [Contact](#contact)
+
+## Try it
+
+- **Live site:** [rizky-portfolio.pages.dev](https://rizky-portfolio.pages.dev/)
+- **Interactive demos:** [/demos](https://rizky-portfolio.pages.dev/demos) — inbox,
+  booking, HR flows, CMS playground, and a live voice call with the agent.
+- **Locally:** `npm run dev`, then `npm run demo:audit` checks every demo with
+  Playwright and fails on console errors or broken flows.
 
 ## What is interesting here
 
@@ -52,17 +75,18 @@ render-blocking stylesheets accounted for most of what was left.
 ### Try the work, not just read about it
 
 Each featured project has an **Interactive Demo** link that opens a working mock
-at `/demos`: the Channelflow AI inbox (approve an AI draft, watch a handoff),
-the booking wizard, the staff mobile board, the PeopleOS HR dashboard with its
-approvals/schedule/hiring flows, and the Unicorn CMS page-builder playground
-(click to add, drag to reorder, switch devices).
+at `/demos`. These are rebuilt front-end replicas with fictional data — the
+production code stays private, but the interactions are the real ones. They are
+covered by a Playwright audit (`npm run demo:audit`, needs `npm run dev` on
+:3000) that fails on console errors or broken flows.
 
-These are rebuilt front-end replicas with fictional data — the production code
-stays private, but the interactions are the real ones. The one exception is
-the Voice tab: a live call with the agent over Gemini Live (single-use token
-per call, 5 calls per hour). They are covered by a
-Playwright audit (`npm run demo:audit`, needs `npm run dev` on :3000) that fails
-on console errors or broken flows.
+| Channelflow — AI inbox | PeopleOS — HR overview | Unicorn CMS — page builder |
+|---|---|---|
+| ![Channelflow AI inbox: agent draft awaiting staff approval](docs/demos-channelflow.jpg) | ![PeopleOS HR overview dashboard with headcount charts](docs/demos-peopleos.jpg) | ![Unicorn CMS visual editor canvas with add palette](docs/demos-unicorn-cms.jpg) |
+| Approve an AI draft, watch a sensitive chat hand off to a human. | Two-step leave approvals, shift schedule with GPS clock-in, hiring pipeline. | Click to add blocks, drag to reorder, switch devices, undo anything. |
+
+The one exception is the Voice tab: a live call with the agent over Gemini Live
+(single-use token per call, 5 calls per hour per visitor, mic required).
 
 ### Resilience where it actually failed
 
@@ -74,21 +98,32 @@ rather than surfacing as an error.
 
 ## Built with
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui ·
-Framer Motion · Gemini · Upstash Redis · Cloudflare Pages
+| Layer | Technology | Note |
+|---|---|---|
+| Framework | Next.js 16 (App Router) · React 19 · TypeScript | Path alias `@/*` → repo root |
+| UI | Tailwind CSS v4 · shadcn/ui · Framer Motion | `m`, never `motion` (see `components/lazy-motion-provider.tsx`) |
+| AI | Gemini over plain REST · Gemini Live for voice | Thinking disabled → replies in ~2s instead of ~6s |
+| Data | Upstash Redis | Rate limiting only; optional at runtime by design |
+| Hosting | Cloudflare Pages | `images.unoptimized: true`, edge runtime on API routes |
 
 ## Running it locally
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in the four values
+cp .env.example .env.local   # fill in the values below
 npm run dev
 ```
 
-The site renders without any environment variables; only the chat widget needs
-them. `npm run resume:sync` re-transcribes the resume, `npm test` runs the
-unit tests, and `npm run demo:audit` (with the dev server running) checks the
-interactive demos.
+| Variable | Used by | Without it |
+|---|---|---|
+| `GEMINI_API_KEY` | Chat route, resume sync | Only the chat widget fails; the site renders |
+| `GOOGLE_DOC_ID` | Resume sync script only | `npm run resume:sync` cannot fetch the doc |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Rate limiting | Limiter fails open; everything works |
+
+`npm run build` is the check before pushing (TypeScript errors are not ignored).
+`npm run resume:sync` re-transcribes the resume, `npm test` runs the unit tests,
+and `npm run demo:audit` (with the dev server running) checks the interactive
+demos.
 
 ## Contact
 
