@@ -67,10 +67,12 @@ jobs:
           git push --force-with-lease origin bot/resume-sync
           PR=$(gh pr list --head bot/resume-sync --json number --jq '.[0].number // empty')
           if [ -z "$PR" ]; then
-            PR=$(gh pr create --head bot/resume-sync --base main \
+            # NOTE: `gh pr create` on these runners has no --json flag; the
+            # create prints the PR URL, then `gh pr view` reads the number.
+            gh pr create --head bot/resume-sync --base main \
               --title "chore: sync resume from Google Docs" \
-              --body "Automated transcription of the Google Doc resume. Auto-merges when CI is green; if CI stays red, inspect manually." \
-              --json number --jq '.number')
+              --body "Automated transcription of the Google Doc resume. Auto-merges when CI is green; if CI stays red, inspect manually."
+            PR=$(gh pr view bot/resume-sync --json number --jq '.number')
             echo "Opened PR #$PR"
           else
             echo "Updated existing PR #$PR"
