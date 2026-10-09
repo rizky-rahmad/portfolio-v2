@@ -78,13 +78,13 @@ Two constraints that are easy to break:
 
 ## CI: merge only on green
 
-`.github/workflows/ci.yml` runs on every PR (and every push except
+`.github/workflows/ci.yml` runs on every PR and every push (except
 resume-only ones): `build-test` (`npm ci` → `npm run build` → `npm test`)
 then `audit` (Playwright chromium + dev server + `npm run demo:audit`).
-Branch protection on `main` requires both checks plus a PR — a red CI locks
-the merge, and only `main` auto-deploys, so production only receives green
-code. Normal flow is PR → green → merge → auto-deploy; direct pushes are for
-emergencies only (no bypass is configured — even the owner goes through a PR).
+It is advisory — `main` is not branch-protected and every push auto-deploys
+via Cloudflare, whose own build typechecks (`ignoreBuildErrors: false`), so
+broken code fails at deploy time, not in production. A red CI means fix it,
+not a locked merge.
 
 Two things to keep in sync:
 
@@ -92,11 +92,9 @@ Two things to keep in sync:
   version must match the `playwright-core` devDependency when bumping it
   (core ships no browser; the downloaded chromium in `~/.cache/ms-playwright`
   is auto-discovered only when the versions agree).
-- The sync bot lands `content/resume.json` through a bot PR (`bot/resume-sync`,
-  auto-merge squash) using only `GITHUB_TOKEN` — no PAT, no bypass. Every
-  transcription passes full CI before reaching production. If its PR stays open
-  with red CI, inspect manually; the next hourly run updates the same branch.
-  `allow_auto_merge` must stay enabled on the repo or the bot fails loudly.
+- The sync bot pushes `content/resume.json` straight to `main` with
+  `GITHUB_TOKEN` — no PR, no PAT, no protection to bypass. Its pushes touch
+  only that file, which `ci.yml` skips via `paths-ignore`.
 
 ## The chatbot
 

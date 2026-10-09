@@ -1,13 +1,12 @@
 name: CI
 
-# Required checks for main (see branch protection): build-test + audit.
-# A red CI locks the merge, and only main auto-deploys to Cloudflare —
-# so production only ever receives green code.
+# Advisory CI: build-test + demo audit on every PR and push. Nothing gates on
+# it — main is not branch-protected (solo-dev repo) and every push to main
+# auto-deploys via Cloudflare, whose own build typechecks
+# (ignoreBuildErrors: false). A red CI is a signal to fix, not a locked door.
 #
-# The hourly sync bot lands content/resume.json through a bot PR with
-# auto-merge, so its transcriptions pass this full CI like any other change.
-# Pushes that only touch content/resume.json (e.g. an emergency direct push)
-# skip this workflow via paths-ignore below.
+# Pushes that only touch content/resume.json (the hourly sync bot) skip this
+# workflow via paths-ignore below: data-only changes need no 8-minute audit.
 
 on:
   pull_request:
