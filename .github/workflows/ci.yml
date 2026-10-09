@@ -4,9 +4,10 @@ name: CI
 # A red CI locks the merge, and only main auto-deploys to Cloudflare —
 # so production only ever receives green code.
 #
-# Pushes that only touch content/resume.json (the hourly sync bot) skip
-# this workflow via paths-ignore: data-only changes need no 8-minute
-# browser audit and deploy like any other push.
+# The hourly sync bot lands content/resume.json through a bot PR with
+# auto-merge, so its transcriptions pass this full CI like any other change.
+# Pushes that only touch content/resume.json (e.g. an emergency direct push)
+# skip this workflow via paths-ignore below.
 
 on:
   pull_request:
