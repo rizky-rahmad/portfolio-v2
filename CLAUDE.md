@@ -84,7 +84,7 @@ then `audit` (Playwright chromium + dev server + `npm run demo:audit`).
 Branch protection on `main` requires both checks plus a PR — a red CI locks
 the merge, and only `main` auto-deploys, so production only receives green
 code. Normal flow is PR → green → merge → auto-deploy; direct pushes are for
-emergencies only (the owner is on the bypass list).
+emergencies only (no bypass is configured — even the owner goes through a PR).
 
 Two things to keep in sync:
 
@@ -92,10 +92,11 @@ Two things to keep in sync:
   version must match the `playwright-core` devDependency when bumping it
   (core ships no browser; the downloaded chromium in `~/.cache/ms-playwright`
   is auto-discovered only when the versions agree).
-- The sync bot pushes via `RESUME_PAT` (fine-grained PAT, contents:write),
-  because `GITHUB_TOKEN` cannot bypass branch protection. Its pushes touch
-  only `content/resume.json`, which `ci.yml` ignores via `paths-ignore` —
-  data-only changes deploy without burning an 8-minute audit.
+- The sync bot lands `content/resume.json` through a bot PR (`bot/resume-sync`,
+  auto-merge squash) using only `GITHUB_TOKEN` — no PAT, no bypass. Every
+  transcription passes full CI before reaching production. If its PR stays open
+  with red CI, inspect manually; the next hourly run updates the same branch.
+  `allow_auto_merge` must stay enabled on the repo or the bot fails loudly.
 
 ## The chatbot
 
