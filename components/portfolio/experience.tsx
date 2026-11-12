@@ -7,57 +7,96 @@ import { Briefcase, Calendar, MapPin, Building2, CheckCircle2 } from "lucide-rea
 
 const experiences = [
   {
-    title: "Full Stack Developer",
-    company: "PT Unicorn",
-    location: "Ubud, Bali, Indonesia",
-    period: "Jun 2026 – Present",
-    type: "Full-time",
-    responsibilities: [
-      "Channelflow: co-developed an omnichannel inbox for WhatsApp, Instagram, Email and TikTok where an AI agent answers customers in their own language and completes bookings end to end — ~3,500 bookings and ~17,700 messages a month in production.",
-      "Shipped LLM guardrails: the agent writes ~400 replies a day and hands the conversation to a human on sensitive or low-confidence cases, with a second model verifying before it continues.",
-      "Contributed to the message pipeline's reliability: queued processing with retries, handoff to a human after a crash, voice-note transcription and photo understanding.",
-      "Co-developed a staff Android app (Expo) with day, list and month views and analytics, and a real-time voice agent (LiveKit) now in pilot.",
-      "PeopleOS: contributed to an HR platform used by 154 employees on web and Android for hiring, training, scheduling, GPS clock-in and leave — focus on the mobile app and approval workflows.",
-      "Unicorn CMS: developing a multi-brand drag-and-drop website builder — 20+ elements, per-device layouts, version history, SEO and tracking, covered by end-to-end tests.",
+    "title": "Full Stack Developer",
+    "company": "PT Unicorn",
+    "location": "Ubud, Bali, Indonesia",
+    "period": "Jun 2026 – Present",
+    "type": "Full-time",
+    "responsibilities": [
+      "Develops web, mobile, and AI applications for business operations, working with staff and managers to define product flows, test features, and support releases and follow-up improvements.",
+      "Channelflow: Worked with staff and managers to define messaging and booking flows, test features with users, and follow up on feedback. Extended an existing inbox across WhatsApp, Instagram, email, and TikTok. The platform handles approximately 17,700 messages and 3,500 bookings per month.",
+      "Developed AI messaging and booking features using semantic search, knowledge-base retrieval (RAG), and staff handoff. The AI agent generates an average of about 400 replies per day.",
+      "Added WhatsApp voice-note transcription and role-based permissions and worked on message queues, retries, crash handoff, and photo understanding.",
+      "Extended an existing Expo Android booking app supporting day, list, and month views, improved analytics and added over-the-air updates.",
+      "Built a voice booking agent from the initial concept, defining conversation flows and testing calls. The pilot includes availability checks, booking tools, and caller confirmation before saving a reservation.",
+      "PeopleOS: Developed web and mobile features for a platform used by 154 employees for hiring, training, scheduling, GPS clock-in, and leave. Work includes leave requests, approval flows, and leave-tracker exports.",
+      "Developed AI interview authoring features and integration fixes, including controls for reviewing the interviewer’s script.",
+      "Unicorn CMS: Built a drag-and-drop page builder from the initial concept, defining editor workflows and guiding implementation. Includes 20+ components, device-specific layouts, and version history.",
+      "Added website imports, brand-domain publishing, SEO, and tracking, with end-to-end checks in Playwright."
     ],
-    skills: ["Next.js", "Hono", "Mastra", "BullMQ", "PostgreSQL", "Drizzle", "React Native (Expo)", "LiveKit", "Playwright"],
+    "skills": [
+      "Next.js",
+      "Hono",
+      "Mastra",
+      "BullMQ",
+      "PostgreSQL",
+      "Drizzle",
+      "React Native (Expo)",
+      "LiveKit",
+      "Playwright"
+    ]
   },
   {
-    title: "Website Developer & IT Support",
-    company: "Aceh Besar Prosecutor's Office",
-    location: "Aceh Besar, Indonesia",
-    period: "2022 – 2024",
-    type: "Full-time",
-    responsibilities: [
-      "Provided comprehensive technical support and troubleshooting for 40+ staff members, ensuring system reliability.",
-      "Maintained and updated the institutional website using WordPress and Elementor via regular content updates.",
-      "Produced high-quality digital assets (banners, videos, infographics) aligned with institutional branding.",
+    "title": "Full Stack Developer",
+    "company": "BPSDM Aceh",
+    "location": "Aceh, Indonesia",
+    "period": "Sep 2025 – Nov 2025",
+    "type": "Contract",
+    "responsibilities": [
+      "Built SIKEMAS (sikemasbpsdm.web.id), a complaint management platform with ticket tracking, role-based access, audit logs, and analytics.",
+      "Developed an online attendance system with role-based access, one check-in per employee per day, and daily and monthly reports."
     ],
-    skills: ["WordPress", "Elementor", "Technical Support", "Digital Assets", "Troubleshooting"],
+    "skills": [
+      "React",
+      "Node.js",
+      "Express",
+      "PostgreSQL"
+    ]
   },
   {
-    title: "Office Administrator & IT Support",
-    company: "DS&AI Syiah Kuala University",
-    location: "Banda Aceh, Indonesia",
-    period: "2021",
-    type: "Contract",
-    responsibilities: [
-      "Digitized legacy documents using Google Drive and Spreadsheets, ensuring data persistence and preventing loss.",
-      "Delivered efficient IT support and resolved technical issues within a 24-hour window.",
+    "title": "Website Developer & IT Support",
+    "company": "Aceh Besar Prosecutor’s Office",
+    "location": "Aceh Besar, Indonesia",
+    "period": "2022 – 2024",
+    "type": "Full-time",
+    "responsibilities": [
+      "Maintained the public WordPress website and produced digital assets, including banners, videos, and infographics.",
+      "Provided technical support and troubleshooting for 40+ staff members."
     ],
-    skills: ["Google Workspace", "Data Digitization", "IT Support", "Document Management"],
+    "skills": [
+      "WordPress",
+      "Technical Support",
+      "Digital Assets"
+    ]
   },
   {
-    title: "Website Developer",
-    company: "AGC-Scopus 2019 – The 2nd Aceh Global Conference",
-    location: "Banda Aceh, Indonesia",
-    period: "2019",
-    type: "Project",
-    responsibilities: [
-      "Designed and managed the conference website for 100+ attendees, with live updates during the event.",
+    "title": "Office Administrator & IT Support",
+    "company": "DS&AI Syiah Kuala University",
+    "location": "Banda Aceh, Indonesia",
+    "period": "2021",
+    "type": "Contract",
+    "responsibilities": [
+      "Resolved staff and student IT issues within 24 hours and assisted with digital content."
     ],
-    skills: ["Web Design", "Content Management"],
+    "skills": [
+      "IT Support",
+      "Digital Content"
+    ]
   },
+  {
+    "title": "Website Developer",
+    "company": "AGC-Scopus 2019 – The 2nd Aceh Global Conference",
+    "location": "Banda Aceh, Indonesia",
+    "period": "2019",
+    "type": "Project",
+    "responsibilities": [
+      "Designed and managed the conference website for 100+ attendees, with live updates during the event."
+    ],
+    "skills": [
+      "Web Design",
+      "Content Management"
+    ]
+  }
 ]
 
 export function Experience() {
@@ -87,7 +126,7 @@ export function Experience() {
             Professional Experience
           </h2>
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
-            From IT support to shipping AI products that run in production.
+            Experience in web, mobile, and AI applications, alongside IT support.
           </p>
         </m.div>
 

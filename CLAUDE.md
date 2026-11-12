@@ -92,24 +92,13 @@ Two things to keep in sync:
   version must match the `playwright-core` devDependency when bumping it
   (core ships no browser; the downloaded chromium in `~/.cache/ms-playwright`
   is auto-discovered only when the versions agree).
-- The sync bot pushes `content/resume.json` straight to `main` with
-  `GITHUB_TOKEN` — no PR, no PAT, no protection to bypass. Its pushes touch
-  only that file, which `ci.yml` skips via `paths-ignore`.
+- The Google Docs sync workflow is removed locally. Changes take effect on the deployed branch only after an approved deployment.
 
 ## The chatbot
 
-Visitors ask questions; `app/api/chat/route.ts` answers them from
-`content/resume.json` — a Markdown transcription of Rizky's Google Doc resume,
-including everything written inside the scanned certificate images.
+Visitors ask questions through `app/api/chat/route.ts`. The only factual source is the approved set of sections in `content/knowledge.json`. `scripts/index-knowledge.mjs` builds the local semantic index using Gemini embeddings. The route embeds the question and ranks indexed sections by cosine similarity. The profile and current role are always included to avoid confusing target roles with employment history.
 
-**The resume is transcribed when the document changes, never per request.**
-Sending the PDF to Gemini on every message used to cost ~40s a reply for a
-reading that came out the same every time. `scripts/sync-resume.mjs` downloads
-the doc, hashes it, and re-transcribes only on a change; the hourly GitHub
-Actions job in `.github/workflows/sync-resume.yml` runs it and commits the
-result. Rizky updates the resume by pasting into the Google Doc — that stays
-his only manual step. To force a sync now, use the workflow's *Run workflow*
-button, or run `npm run resume:sync` locally.
+Run `npm run knowledge:index` after editing approved knowledge. If the index is stale or embedding fails, the route falls back to all approved knowledge. The assistant is instructed to say when it cannot find an answer. No Google Docs synchronization is used by this implementation.
 
 Two constraints worth keeping in mind before changing this route:
 
@@ -181,11 +170,8 @@ validation only; real calls need manual QA with a mic.
 Copy `.env.example` to `.env.local` and fill it in. Without these the site still
 renders; only the chatbot fails.
 
-- `GEMINI_API_KEY` — from Google AI Studio. Used by the route and by the sync
-  script; CI needs it as a repository secret too.
+- `GEMINI_API_KEY` — used by the chat route and semantic index script.
 - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` — rate limiting only.
-- `GOOGLE_DOC_ID` — the resume doc, which must stay publicly readable. Only
-  `scripts/sync-resume.mjs` reads it; the request path never touches Google Docs.
 
 ## Performance constraints
 

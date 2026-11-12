@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint .",
-    "resume:sync": "node --env-file-if-exists=.env.local scripts/sync-resume.mjs",
     "test": "node --test lib/*.test.ts",
-    "demo:audit": "node scripts/demo-audit.mjs"
+    "demo:audit": "node scripts/demo-audit.mjs",
+    "knowledge:index": "node --env-file-if-exists=.env.local scripts/index-knowledge.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

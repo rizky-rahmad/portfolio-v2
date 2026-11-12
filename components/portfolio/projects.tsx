@@ -24,7 +24,7 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "Channelflow — Omnichannel AI Agent",
     description:
-      "One inbox for WhatsApp, Instagram, Email and TikTok where an AI agent answers customers in their own language and completes bookings end to end — ~3,500 bookings and ~17,700 messages a month in production. Sensitive or low-confidence chats go to a human, a second model verifies before the agent continues, and a queue with retries means a crash never leaves a customer unanswered.",
+      "Worked with staff and managers to define messaging and booking flows, test features with users, and follow up on feedback. Extended an existing inbox across WhatsApp, Instagram, email, and TikTok. The platform handles approximately 17,700 messages and 3,500 bookings per month. Developed AI messaging and booking features using semantic search, knowledge-base retrieval (RAG), and staff handoff. The AI agent generates an average of about 400 replies per day. Added WhatsApp voice-note transcription and role-based permissions and worked on message queues, retries, crash handoff, and photo understanding. Extended an existing Expo Android booking app supporting day, list, and month views, improved analytics and added over-the-air updates. Built a voice booking agent from the initial concept, defining conversation flows and testing calls. The pilot includes availability checks, booking tools, and caller confirmation before saving a reservation.",
     image: "/images/projects/channelflow.webp",
     demoUrl: "/demos/channelflow",
     stack: ["Next.js", "Hono", "Mastra", "BullMQ", "PostgreSQL", "Drizzle", "Expo", "LiveKit"],
@@ -34,7 +34,7 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "PeopleOS — HR Platform",
     description:
-      "One HR platform for hiring, training, shift scheduling, GPS clock-in and leave, used by 154 employees on web and Android. My focus: the mobile app and the multi-step leave approval flow.",
+      "Developed web and mobile features for a platform used by 154 employees for hiring, training, scheduling, GPS clock-in, and leave. Work includes leave requests, approval flows, and leave-tracker exports. Developed AI interview authoring features and integration fixes, including controls for reviewing the interviewer’s script.",
     image: "/images/projects/peopleos.webp",
     demoUrl: "/demos/peopleos",
     stack: ["React", "Express", "PostgreSQL", "Drizzle", "React Native (Expo)"],
@@ -44,7 +44,7 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "Unicorn CMS — Multi-brand Website Builder",
     description:
-      "A drag-and-drop page builder for every brand site: 20+ elements, per-device layouts, version history with restore, SEO and tracking — covered by end-to-end tests.",
+      "Built a drag-and-drop page builder from the initial concept, defining editor workflows and guiding implementation. Includes 20+ components, device-specific layouts, and version history. Added website imports, brand-domain publishing, SEO, and tracking, with end-to-end checks in Playwright.",
     image: "/images/projects/unicorn-cms.webp",
     demoUrl: "/demos/unicorn-cms",
     stack: ["Next.js", "Hono", "PostgreSQL", "Drizzle", "Tiptap", "Playwright"],
@@ -54,7 +54,7 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "Portfolio with AI Assistant",
     description:
-      "This site. An assistant answers visitors' questions about my background in English or Indonesian. Reply time dropped from ~49s to ~2s by transcribing the résumé once when it changes instead of on every message, and mobile PageSpeed went from 90 to 98.",
+      "Built an assistant answering questions about my background in English or Indonesian. Reduced reply time from approximately 49 to 2 seconds by loading the résumé only when it changes. Identified a CSS fade-in delaying LCP. Mobile PageSpeed rose from 90 to 98 and LCP fell from 1,536 ms to 508 ms.",
     image: "/images/projects/portfolio-ai.webp",
     liveUrl: "https://rizky-portfolio.pages.dev",
     githubUrl: "https://github.com/rizky-rahmad/portfolio-v2",
@@ -64,7 +64,7 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "ApplyMate AI",
     description:
-      "Turns a résumé and a job posting into a match score, the skills that line up and the ones missing, and a tailored cover letter — grounded only in the candidate's real experience.",
+      "Analyzes a résumé against a job posting and produces a match analysis and tailored cover letter.",
     image: "/images/projects/applymate.webp",
     liveUrl: "https://apply-mate-ai-nine.vercel.app",
     githubUrl: "https://github.com/rizky-rahmad/ApplyMateAi",
@@ -84,8 +84,8 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "SIKEMAS - Complaint Management System",
     description:
-      "Managed platform for BPSDM Aceh with multi-role RBAC, audit logs, and automated ticket dispatching. A comprehensive system for handling institutional complaints efficiently.",
-    image: "/images/projects/sikemas.jpg",
+      "Built SIKEMAS (sikemasbpsdm.web.id), a complaint management platform with ticket tracking, role-based access, audit logs, and analytics.",
+    image: "/images/projects/sikemas.webp",
     liveUrl: "https://sikemasbpsdm.web.id",
     stack: [
       "React (Vite)",
@@ -101,8 +101,8 @@ const featuredProjects: FeaturedProject[] = [
   {
     title: "Attendance System - Online Platform",
     description:
-      "Full-stack engine with server-side filtering and geolocation check-in validation for large employee datasets. Built for scalability and reliability.",
-    image: "/images/projects/attendance.jpg",
+      "Developed an online attendance system with role-based access, one check-in per employee per day, and daily and monthly reports.",
+    image: "/images/projects/attendance.webp",
     stack: [
       "React (Vite)",
       "Bootstrap 5",

@@ -11,7 +11,7 @@ const socialLinks = [
   },
   {
     icon: Linkedin,
-    href: "https://linkedin.com/in/rahmad-rizki-1728a6186",
+    href: "https://www.linkedin.com/in/rahmad-rizki/",
     label: "LinkedIn",
   },
   {
@@ -75,7 +75,7 @@ export function Footer() {
                 </div>
               </a>
               <p className="mt-4 text-muted-foreground max-w-md leading-relaxed">
-                Full Stack Software Engineer based in Ubud, Bali. Shipping AI products that run in production every day.
+                Full Stack Developer | Software Engineer | Forward Deployed Engineer. Web, Mobile & AI Applications for Business Workflows.
               </p>
 
               {/* Social Links */}

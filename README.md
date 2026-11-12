@@ -32,25 +32,11 @@ all running in the browser. Next.js on Cloudflare Pages.
 
 ## What is interesting here
 
-### An AI assistant that answers from my actual resume
+### An AI assistant grounded in approved information
 
-Visitors can ask the chat widget anything about my experience, skills, or
-certificates, in English or Indonesian. It answers only from my resume and says
-so plainly when it does not know, rather than inventing an answer.
+The chatbot uses approved information stored in `content/knowledge.json`. A local index of embeddings selects relevant sections for each visitor question before Gemini writes an answer. When embeddings are unavailable or the index is out of date, the chatbot falls back to all approved information. If a fact is absent, the assistant is instructed to say it does not know.
 
-The interesting part is where the work happens. My resume lives in a Google Doc,
-and the certificates in it are images — scans that only a vision model can read.
-The obvious implementation sends that document to the model with every message,
-which is what this did at first, and it cost about 40 seconds per reply for a
-reading that came out identical every time.
-
-So the reading moved to the moment the document changes. A GitHub Actions job
-hashes the document hourly and, only when it actually changed, has Gemini
-transcribe it once into `content/resume.json` and commits the result. Answering a
-visitor is then a small text prompt against 8KB of Markdown.
-
-**Replies went from ~49s to ~2s**, and I still update my resume the same way as
-before: by pasting into the Google Doc.
+Update the knowledge file and run `npm run knowledge:index` to regenerate the index. The previous Google Docs synchronization is disabled in this checkout. The index and query embeddings use the Gemini API and may consume quota or incur charges.
 
 ### Performance treated as a measured problem
 
@@ -116,16 +102,15 @@ npm run dev
 
 | Variable | Used by | Without it |
 |---|---|---|
-| `GEMINI_API_KEY` | Chat route, resume sync | Only the chat widget fails; the site renders |
-| `GOOGLE_DOC_ID` | Resume sync script only | `npm run resume:sync` cannot fetch the doc |
+| `GEMINI_API_KEY` | Chat route and semantic index | The chatbot and index generation need the key |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Rate limiting | Limiter fails open; everything works |
 
 `npm run build` is the check before pushing (TypeScript errors are not ignored).
-`npm run resume:sync` re-transcribes the resume, `npm test` runs the unit tests,
+`npm run knowledge:index` refreshes the semantic index, `npm test` runs the unit tests,
 and `npm run demo:audit` (with the dev server running) checks the interactive
 demos.
 
 ## Contact
 
 - Email: rizky.business7@gmail.com
-- [LinkedIn](https://linkedin.com/in/rahmad-rizki-1728a6186) · [GitHub](https://github.com/rizky-rahmad) · [WhatsApp](https://wa.me/6282365434655)
+- [LinkedIn](https://www.linkedin.com/in/rahmad-rizki/) · [GitHub](https://github.com/rizky-rahmad) · [WhatsApp](https://wa.me/6282365434655)

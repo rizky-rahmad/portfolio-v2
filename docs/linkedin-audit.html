@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Audit LinkedIn — Rahmad Rizki</title>
+<style>
+  :root {
+    --primary:#0F766E; --primary-ink:#134E4A; --secondary:#0D9488; --accent:#C2410C; --accent-hi:#9A3412; --on-accent:#ffffff;
+    --bg:#F0FDFA; --fg:#134E4A; --card:#FFFFFF; --muted:#E8F1F4;
+    --muted-fg:#475569; --border:#BFE0DA; --destructive:#DC2626;
+    --amber-bg:#FFFBEB; --amber-bd:#E9C46A; --amber-fg:#92400E;
+    --green-bg:#ECFDF5; --green-bd:#6EE7B7; --green-fg:#047857;
+    --radius:10px; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } * { transition:none !important; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 var(--sans); }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:2px; border-radius:6px; }
+  .hero { background:var(--primary-ink); color:#fff; padding:32px 24px 24px; }
+  .hero-inner { max-width:1020px; margin:0 auto; }
+  .hero h1 { margin:0 0 8px; font-size:clamp(24px,4vw,32px); letter-spacing:-.01em; }
+  .hero p { margin:6px 0; color:#D7F0EA; max-width:75ch; font-size:14.5px; }
+  nav.sticky { position:sticky; top:0; z-index:50; background:var(--card); border-bottom:1px solid var(--border); }
+  nav.sticky .wrap { max-width:1020px; margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
+  nav.sticky a { flex:0 0 auto; font-size:13px; font-weight:600; color:var(--primary); text-decoration:none;
+    border:1px solid var(--border); border-radius:999px; padding:8px 14px; min-height:44px;
+    display:inline-flex; align-items:center; transition:background .2s,border-color .2s; cursor:pointer; }
+  nav.sticky a:hover { background:var(--muted); border-color:var(--primary); }
+  main { max-width:1020px; margin:0 auto; padding:24px 16px 90px; }
+  main p, .note { max-width:75ch; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:24px; margin:16px 0; }
+  .card h2 { margin:0 0 4px; font-size:20px; letter-spacing:-.01em; }
+  .card[id] { scroll-margin-top:110px; }
+  .sub { color:var(--muted-fg); font-size:14px; margin:0 0 6px; }
+  .stats { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .stat { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); border-radius:12px;
+    padding:10px 16px; font-size:13px; color:#D7F0EA; }
+  .stat b { display:block; font-size:22px; color:#fff; letter-spacing:-.02em; }
+  .queue { counter-reset:step sub; list-style:none; margin:6px 0 0; padding:0; }
+  .queue > li { counter-increment:step; display:grid; grid-template-columns:32px 1fr; gap:14px;
+    padding:18px 4px; border-bottom:1px solid var(--border); scroll-margin-top:110px; }
+  .queue > li:last-child { border-bottom:0; }
+  .queue > li::before { content:counter(step); width:32px; height:32px; border-radius:50%;
+    background:var(--primary); color:#fff; font-weight:700; font-size:14px;
+    display:inline-flex; align-items:center; justify-content:center; }
+  .queue > li.sub { counter-increment:sub; }
+  .queue > li.sub::before { content:"6" counter(sub, lower-alpha); font-size:12px; }
+  .queue > li.final { counter-increment:step 2; }
+  .queue > li.final::before { content:counter(step); }
+  .queue h3 { margin:0 0 6px; font-size:16px; }
+  .queue .time { font-size:13px; color:var(--muted-fg); font-weight:400; }
+  .queue p { margin:8px 0; font-size:14.5px; }
+  .paste { margin:14px 0; }
+  .paste .lbl { display:block; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.07em; margin-bottom:6px; color:var(--green-fg); }
+  textarea.copyable { width:100%; border:1px solid var(--border); border-radius:10px; padding:12px;
+    font:13.5px/1.65 var(--mono); background:#FCFDFE; color:var(--fg); resize:vertical; min-height:110px; }
+  .row { display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+  button.copy { background:var(--accent); color:var(--on-accent); border:0; border-radius:9px;
+    padding:0 18px; min-height:44px; font-size:14px; font-weight:600; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; transition:background .2s; }
+  button.copy:hover { background:var(--accent-hi); } button.copy.ok { background:var(--primary); }
+  button.copy svg { width:16px; height:16px; }
+  .count { font-size:13px; color:var(--muted-fg); } .count.over { color:var(--destructive); font-weight:700; }
+  .note { font-size:13.5px; border-radius:10px; padding:11px 13px; margin:10px 0; }
+  .note.amber { background:var(--amber-bg); border:1px solid var(--amber-bd); }
+  code { background:var(--muted); padding:1px 7px; border-radius:6px; font-size:13px; }
+  table.assets { width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.assets th, table.assets td { border:1px solid var(--border); padding:9px 11px; text-align:left; vertical-align:top; }
+  table.assets th { background:var(--muted); }
+  footer { color:var(--muted-fg); font-size:13px; text-align:center; padding:28px; }
+  @media print { nav.sticky, button.copy { display:none; } .card { break-inside:avoid; } }
+</style>
+</head>
+<body>
+
+<div class="hero"><div class="hero-inner">
+  <h1>Panduan Audit LinkedIn — Rahmad Rizki</h1>
+  <p>Cara pakai: kerjakan langkah 1→7 di bawah sampai selesai. Tiap langkah memuat semua yang dibutuhkan — tidak perlu melompat ke bagian lain. Klik <b>Copy</b> di kotak hijau → paste ke LinkedIn.</p>
+  <div class="stats" aria-label="Statistik panduan">
+    <div class="stat"><b>11</b>langkah (±45 menit)</div>
+    <div class="stat"><b>6</b>kotak copy tersisa</div>
+    <div class="stat"><b>6</b>aset gambar siap upload</div>
+  </div>
+</div></div>
+
+<nav class="sticky" aria-label="Navigasi"><div class="wrap">
+  <a href="#antrian">Langkah 1→7</a><a href="#s6a">Projects</a><a href="#lampiran">Lampiran</a>
+</div></nav>
+
+<main>
+
+<div class="card" id="antrian">
+  <h2>Kerjakan urut 1→7</h2>
+  <p class="sub">Sisanya sudah live dan terverifikasi (Headline opsi B, About, Banner, PT Unicorn, SIKEMAS, Kejaksaan, FISIP, BINUS, Skills, Languages). Di bawah ini hanya yang belum.</p>
+  <ol class="queue">
+    <li><div>
+      <h3>Lokasi Open to Work → Remote + Hybrid + Bali <span class="time">±2 menit</span></h3>
+      <p>Profil tampil “Jakarta, Indonesia +4 more | On-site · Hybrid”, sementara lokasi profil Bali dan target remote. Buka Open to Work → ganti lokasi ke <b>Remote + Hybrid + Bali (on-site)</b>. Buang Jakarta kecuali memang target.</p>
+    </div></li>
+    <li><div>
+      <h3>Asosiasi Projects → BPSDM Aceh <span class="time">±3 menit</span></h3>
+      <p>SIKEMAS dan Attendance System tertulis “Associated with BINUS University” — keduanya kerjaan BPSDM Aceh. Ganti asosiasi ke pengalaman BPSDM Aceh, atau lepas asosiasi. Attendance: hide saja (CV tetap mencantumkan).</p>
+    </div></li>
+    <li><div>
+      <h3>Headline → angka produksi <span class="time">±1 menit</span></h3>
+      <p>Headline live (112 karakter) paruh keduanya klaim tanpa bukti. Ganti dengan yang membawa angka 3.500 bookings/mo:</p>
+      <div class="paste"><span class="lbl">Copy → paste ke Headline</span>
+<textarea class="copyable" id="t-hl-d" style="min-height:60px">Software Engineer (Full Stack + Applied AI) | React/Next.js, Node.js | AI inbox handling 3,500 bookings/mo in production</textarea>
+      <div class="row"><button class="copy" data-for="t-hl-d"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button><span class="count" data-count="t-hl-d" data-limit="220"></span></div></div>
+    </div></li>
+    <li><div>
+      <h3>Top skills About → TypeScript <span class="time">±2 menit</span></h3>
+      <p>Di bawah About tampil: React.js · Node.js · Express.js · PostgreSQL · REST APIs. Ganti Express.js → <b>TypeScript</b> (bahasa utama semua repo, sudah nomor 1 di Skills).</p>
+    </div></li>
+    <li><div>
+      <h3>Skill FISIP → Web Development <span class="time">±1 menit</span></h3>
+      <p>Tampil “MySQL, Pengembangan Web and +4 skills” — satu-satunya label Indonesia di profil Inggris. Rename skill menjadi <b>Web Development</b>.</p>
+    </div></li>
+    <li class="sub" id="s6a"><div>
+      <h3>Projects: Voice Agent <span class="time">±6 menit</span></h3>
+      <p>Entry baru. Media: <code>linkedin-assets/voice-preview.png</code> — tab Voice demo portfolio saat live call scripted (waveform + transkrip + badge Preview). Angka pilot (jumlah call, biaya/call) jangan dikarang — tambah bila sudah ada data.</p>
+      <div class="paste"><span class="lbl">Copy → paste ke entry Projects baru</span>
+<textarea class="copyable" id="t-voice" style="min-height:150px">Title: Voice Agent for Restaurant Bookings — Channelflow
+Dates: 2026 – Present · Associated with PT Unicorn
+Description:
+Developing a real-time voice agent that takes restaurant bookings over a call. Speech-to-speech (Gemini Live) over LiveKit, with a scripted Preview demo that runs without touching production data. Booking guardrails decide what the agent may confirm on a call.
+
+Stack: LiveKit Agents, Gemini Live, OpenRouter, Qwen, MiniMax, Meta WhatsApp Cloud API, Drizzle, Next.js.</textarea>
+      <div class="row"><button class="copy" data-for="t-voice"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button></div></div>
+    </div></li>
+    <li class="sub"><div>
+      <h3>Projects: PeopleOS <span class="time">±6 menit</span></h3>
+      <p>Entry baru. Media: <code>linkedin-assets/peopleos.png</code>. Jangan upload data karyawan asli (nama, gaji, NIK, CV).</p>
+      <div class="paste"><span class="lbl">Copy → paste ke entry Projects baru</span>
+<textarea class="copyable" id="t-pos" style="min-height:130px">Title: PeopleOS — HR Platform — PT Unicorn
+Dates: 2026 – Present · Associated with PT Unicorn
+Description:
+Developing PeopleOS mobile, the HR platform for 154 employees. It covers hiring, training, scheduling, GPS clock-in and leave, plus multi-step approval workflows.
+
+Stack: React, React Native (Expo), Express, PostgreSQL, Drizzle, Socket.IO, Firebase FCM, TanStack Query, Zustand, Vite.</textarea>
+      <div class="row"><button class="copy" data-for="t-pos"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button></div></div>
+    </div></li>
+    <li class="sub"><div>
+      <h3>Projects: Unicorn CMS <span class="time">±6 menit</span></h3>
+      <p>Entry baru. Media: <code>linkedin-assets/unicorn-cms.png</code>.</p>
+      <div class="paste"><span class="lbl">Copy → paste ke entry Projects baru</span>
+<textarea class="copyable" id="t-cms" style="min-height:140px">Title: Unicorn CMS — Multi-brand Website Builder — PT Unicorn
+Dates: 2026 – Present · Associated with PT Unicorn
+Description:
+Developing a drag-and-drop website builder with 20+ elements, per-device layouts, version history with restore, SEO and tracking. The Warung Senja test site below went from editor canvas to live page in this build.
+
+Stack: Next.js, Hono, PostgreSQL, Drizzle, Tiptap, Better Auth, pg-boss, Zustand, Playwright, Vitest.</textarea>
+      <div class="row"><button class="copy" data-for="t-cms"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button></div></div>
+    </div></li>
+    <li class="sub"><div>
+      <h3>Projects: Portfolio AI <span class="time">±6 menit</span></h3>
+      <p>Entry baru, link <code>https://rizky-portfolio.pages.dev</code>.</p>
+      <div class="paste"><span class="lbl">Copy → paste ke entry Projects baru</span>
+<textarea class="copyable" id="t-portai" style="min-height:130px">Title: Portfolio with AI Assistant
+Link: https://rizky-portfolio.pages.dev
+Description:
+An assistant that answers visitors' questions about my background in English or Indonesian. Reply time fell from about 49 seconds to about 2 seconds. The fix reads the resume once when it changes instead of on every message. Mobile PageSpeed rose from 90 to 98 after a CSS fade-in was found blocking the main metric.
+
+Stack: Next.js, Gemini, Cloudflare, GitHub Actions.</textarea>
+      <div class="row"><button class="copy" data-for="t-portai"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button></div></div>
+    </div></li>
+    <li class="sub"><div>
+      <h3>Projects: ApplyMate AI <span class="time">±6 menit</span></h3>
+      <p>Entry baru, link <code>https://apply-mate-ai-nine.vercel.app</code>.</p>
+      <div class="paste"><span class="lbl">Copy → paste ke entry Projects baru</span>
+<textarea class="copyable" id="t-apply" style="min-height:110px">Title: ApplyMate AI
+Link: https://apply-mate-ai-nine.vercel.app
+Description:
+Turns a resume and a job posting into a match analysis and a tailored cover letter. The analysis stays grounded in the candidate's real experience.
+
+Stack: Next.js, TypeScript, Gemini.</textarea>
+      <div class="row"><button class="copy" data-for="t-apply"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1"/></svg>Copy</button></div></div>
+    </div></li>
+    <li class="final"><div>
+      <h3>Featured ke-4: post demo production <span class="time">±5 menit</span></h3>
+      <p>Kini 3 post (Maju Bareng AI, Azure AI, Portfolio). Tambah 1 slot bukti production — pilih salah satu, gambar di Lampiran:</p>
+      <p><b>1. SIKEMAS</b> — <code>sikemas.png</code>, judul <code>SIKEMAS — Complaint Management System for BPSDM Aceh (live: sikemasbpsdm.web.id)</code>, link <code>https://sikemasbpsdm.web.id</code>.<br>
+      <b>2. Sertifikasi</b> — <code>../public/images/certificates/azure_ai900.jpg</code>, judul <code>Microsoft Certified: Azure AI Fundamentals</code>, link URL Credly Anda.<br>
+      <b>3. Channelflow</b> — <code>channelflow.png</code>, judul <code>Omnichannel inbox with AI draft + human handoff — Channelflow</code>. Tanpa link publik.<br>
+      <b>4. Voice agent</b> — <code>voice-preview.png</code>, judul <code>Real-time voice agent: live call + transcript (scripted preview, Gemini Live) — Channelflow</code>. Tanpa link publik.</p>
+    </div></li>
+  </ol>
+  <div class="note amber"><b>Belum teraudit:</b> sisa About setelah “... more” (LinkedIn memotong di screenshot). Paste full text About untuk audit 2.600 karakter.</div>
+</div>
+
+<div class="card" id="lampiran">
+  <h2>Lampiran — sumber tiap gambar</h2>
+  <table class="assets">
+    <tr><th>File</th><th>Sumber</th><th>Cara ambil</th></tr>
+    <tr><td><code>channelflow.png</code></td><td><code>public/images/projects/channelflow.webp</code></td><td>Konversi <code>.webp</code> → <code>.png</code> (ffmpeg).</td></tr>
+    <tr><td><code>peopleos.png</code></td><td><code>public/images/projects/peopleos.webp</code></td><td>Konversi <code>.webp</code> → <code>.png</code> (ffmpeg).</td></tr>
+    <tr><td><code>unicorn-cms.png</code></td><td><code>public/images/projects/unicorn-cms.webp</code></td><td>Konversi <code>.webp</code> → <code>.png</code> (ffmpeg).</td></tr>
+    <tr><td><code>sikemas.png</code></td><td><code>public/images/projects/sikemas.jpg</code></td><td>Konversi <code>.jpg</code> → <code>.png</code> (ffmpeg).</td></tr>
+    <tr><td><code>voice-preview.png</code></td><td>Tab Voice demo portfolio <code>/demos/channelflow?voice=preview</code></td><td>Klik tab Voice → Start call → tunggu Live + transkrip → screenshot. Scripted preview: tanpa mic, tanpa token, tanpa kuota.</td></tr>
+    <tr><td><code>banner.png</code></td><td>Full-code 1584×396 (teks via kode agar tajam)</td><td>Sudah jadi — upload langsung sebagai background profil.</td></tr>
+  </table>
+  <div class="note amber"><b>Tidak dipakai &amp; kenapa:</b> screenshot kartu homepage · dashboard production berisi data customer asli · halaman berisi secret/token · Attendance (skip).</div>
+</div>
+
+</main>
+<footer>Selesai 8 langkah? Kirim screenshot profil untuk putaran 3.</footer>
+
+<script>
+document.querySelectorAll("button.copy").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var ta = document.getElementById(btn.getAttribute("data-for"));
+    var done = function(){ btn.classList.add("ok");
+      var orig = btn.innerHTML;
+      btn.innerHTML = "Copied";
+      setTimeout(function(){ btn.innerHTML = orig; btn.classList.remove("ok"); }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value).then(done).catch(function(){ ta.select(); document.execCommand("copy"); done(); });
+    } else { ta.select(); document.execCommand("copy"); done(); }
+  });
+});
+document.querySelectorAll(".count[data-count]").forEach(function(el){
+  var ta = document.getElementById(el.getAttribute("data-count"));
+  var lim = parseInt(el.getAttribute("data-limit"), 10);
+  var upd = function(){ var n = ta.value.length;
+    el.textContent = n + " / " + lim + " karakter";
+    el.classList.toggle("over", n > lim); };
+  ta.addEventListener("input", upd); upd();
+});
+</script>
+</body>
+</html>

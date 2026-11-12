@@ -114,7 +114,7 @@ ${formData.message}`
               Contact Information
             </h3>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              {"I'm currently available for freelance work and full-time opportunities. Feel free to reach out through any of the following channels."}
+              {"Interested in full-time and international remote opportunities. Feel free to reach out through any of the following channels."}
             </p>
 
             <div className="space-y-4 mb-10">
@@ -149,9 +149,9 @@ ${formData.message}`
               transition={{ duration: 0.4, delay: 0.6 }}
               className="bg-primary/5 border border-primary/20 rounded-xl p-6"
             >
-              <h4 className="font-semibold text-foreground mb-2">Quick Response Guaranteed</h4>
+              <h4 className="font-semibold text-foreground mb-2">Get in touch</h4>
               <p className="text-sm text-muted-foreground">
-                {"I typically respond within 24 hours. For urgent matters, feel free to reach out via WhatsApp."}
+                {"You can reach me by email or WhatsApp."}
               </p>
             </m.div>
           </m.div>

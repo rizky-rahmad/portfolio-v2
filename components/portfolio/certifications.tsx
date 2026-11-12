@@ -175,6 +175,10 @@ export function Certifications() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
+          <div className="mb-8 rounded-xl border border-border bg-card p-5">
+            <h3 className="font-semibold text-foreground">Memulai Pemrograman dengan Python</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Dicoding Indonesia | Jun 2026 – Jun 2029</p>
+          </div>
           <h3 className="text-2xl font-bold text-foreground mb-8">Training & Webinars</h3>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

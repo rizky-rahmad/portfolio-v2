@@ -1,0 +1,87 @@
+[
+  {
+    "id": "profile",
+    "title": "Profile",
+    "text": "Rahmad Rizki\nTarget roles: Full Stack Developer, Software Engineer, Forward Deployed Engineer. Official current position: Full Stack Developer at PT Unicorn.\nFull Stack Developer building web, mobile, and AI applications for business workflows. Works with users and stakeholders to define product flows, guide AI-assisted implementation with Claude Code, test solutions, and support releases. Experience includes messaging, booking, HR workflows, and website building. Interested in full-time and international remote opportunities, including forward deployed engineering."
+  },
+  {
+    "id": "skills",
+    "title": "Skills",
+    "text": "Product Delivery: Requirements clarification, user flows, AI-assisted development with Claude Code, functional testing, release preparation\nAI Applications: LLM integration, semantic search and embeddings, retrieval-augmented generation (RAG), prompt design, tool calling, guardrails, human handoff, voice agents, Mastra, Gemini, OpenRouter, OpenAI Whisper, LiveKit\nWeb & Mobile: JavaScript (ES6+), TypeScript, HTML5, CSS3, React, Next.js, Tailwind CSS, Vite, React Native, Expo, responsive design, over-the-air updates\nBack-End & Data: Node.js, Hono, Express, NestJS, REST APIs, webhooks, Socket.IO, BullMQ, PostgreSQL, Drizzle ORM, Prisma, Redis, Supabase, JWT, OAuth 2.0, role-based access control\nDeployment & Testing: Docker, Coolify, Cloudflare, Vercel, GitHub Actions, Git, Vitest, Playwright, AI-assisted test creation and execution\nDesign: UI/UX fundamentals, Figma, Adobe Photoshop, Adobe Illustrator"
+  },
+  {
+    "id": "pt-unicorn-overview",
+    "title": "PT Unicorn overview",
+    "text": "Full Stack Developer | PT Unicorn | Ubud, Bali | Jun 2026 - Present\nDevelops web, mobile, and AI applications for business operations, working with staff and managers to define product flows, test features, and support releases and follow-up improvements."
+  },
+  {
+    "id": "channelflow",
+    "title": "Channelflow",
+    "text": "Channelflow | Guest messaging and AI booking\nStack: Next.js, Hono, Mastra, BullMQ, PostgreSQL, Drizzle, Expo, LiveKit\nWorked with staff and managers to define messaging and booking flows, test features with users, and follow up on feedback. Extended an existing inbox across WhatsApp, Instagram, email, and TikTok. The platform handles approximately 17,700 messages and 3,500 bookings per month.\nDeveloped AI messaging and booking features using semantic search, knowledge-base retrieval (RAG), and staff handoff. The AI agent generates an average of about 400 replies per day.\nAdded WhatsApp voice-note transcription and role-based permissions and worked on message queues, retries, crash handoff, and photo understanding.\nExtended an existing Expo Android booking app supporting day, list, and month views, improved analytics and added over-the-air updates.\nBuilt a voice booking agent from the initial concept, defining conversation flows and testing calls. The pilot includes availability checks, booking tools, and caller confirmation before saving a reservation."
+  },
+  {
+    "id": "peopleos",
+    "title": "PeopleOS",
+    "text": "PeopleOS | HR platform\nStack: React, Express, PostgreSQL, Drizzle, React Native (Expo)\nDeveloped web and mobile features for a platform used by 154 employees for hiring, training, scheduling, GPS clock-in, and leave. Work includes leave requests, approval flows, and leave-tracker exports.\nDeveloped AI interview authoring features and integration fixes, including controls for reviewing the interviewer’s script."
+  },
+  {
+    "id": "unicorn-cms",
+    "title": "Unicorn CMS",
+    "text": "Unicorn CMS | Multi-brand website builder\nStack: Next.js, Hono, PostgreSQL, Drizzle, Tiptap, Playwright\nBuilt a drag-and-drop page builder from the initial concept, defining editor workflows and guiding implementation. Includes 20+ components, device-specific layouts, and version history.\nAdded website imports, brand-domain publishing, SEO, and tracking, with end-to-end checks in Playwright."
+  },
+  {
+    "id": "bpsdm-aceh",
+    "title": "BPSDM Aceh",
+    "text": "Full Stack Developer (Contract) | BPSDM Aceh | Sep 2025 - Nov 2025\nBuilt SIKEMAS (sikemasbpsdm.web.id), a complaint management platform with ticket tracking, role-based access, audit logs, and analytics.\nDeveloped an online attendance system with role-based access, one check-in per employee per day, and daily and monthly reports."
+  },
+  {
+    "id": "aceh-besar-prosecutor-office",
+    "title": "Aceh Besar Prosecutor Office",
+    "text": "Website Developer & IT Support | Aceh Besar Prosecutor’s Office | 2022 - 2024\nMaintained the public WordPress website and produced digital assets, including banners, videos, and infographics.\nProvided technical support and troubleshooting for 40+ staff members."
+  },
+  {
+    "id": "syiah-kuala-employment",
+    "title": "Syiah Kuala employment",
+    "text": "Office Administrator & IT Support | DS&AI Syiah Kuala University | 2021\nResolved staff and student IT issues within 24 hours and assisted with digital content."
+  },
+  {
+    "id": "agc-scopus",
+    "title": "AGC Scopus",
+    "text": "Website Developer | AGC-Scopus 2019 - The 2nd Aceh Global Conference | 2019\nDesigned and managed the conference website for 100+ attendees, with live updates during the event."
+  },
+  {
+    "id": "portfolio-ai-assistant",
+    "title": "Portfolio AI assistant",
+    "text": "Portfolio with AI Assistant\nrizky-portfolio.pages.dev | Next.js, Gemini, Cloudflare, GitHub Actions\nBuilt an assistant answering questions about my background in English or Indonesian. Reduced reply time from approximately 49 to 2 seconds by loading the résumé only when it changes.\nIdentified a CSS fade-in delaying LCP. Mobile PageSpeed rose from 90 to 98 and LCP fell from 1,536 ms to 508 ms."
+  },
+  {
+    "id": "applymate-ai",
+    "title": "ApplyMate AI",
+    "text": "ApplyMate AI\napply-mate-ai-nine.vercel.app | Next.js, TypeScript, Gemini\nAnalyzes a résumé against a job posting and produces a match analysis and tailored cover letter."
+  },
+  {
+    "id": "education",
+    "title": "Education",
+    "text": "Bina Nusantara (BINUS) Online | Nov 2025 - Present\nBachelor of Computer Science | Top-up Program (D3 to S1) | Expected Nov 2027\nSyiah Kuala University, Banda Aceh | 2016 - 2021\nDiploma III in Informatics Management | GPA 3.18\nFull-Stack Web Developer Bootcamp | Udemy | Dr. Angela Yu\nJavaScript (ES6), Node.js, Express, APIs, Git, PostgreSQL"
+  },
+  {
+    "id": "certifications",
+    "title": "Certifications",
+    "text": "Microsoft Certified: Azure AI Fundamentals\nDicoding Indonesia | Memulai Pemrograman dengan Python | Jun 2026 - Jun 2029"
+  },
+  {
+    "id": "languages",
+    "title": "Languages",
+    "text": "English: Proficient | Bahasa Indonesia: Native"
+  },
+  {
+    "id": "contact",
+    "title": "Contact",
+    "text": "+62 823 6543 4655 | rizky.business7@gmail.com | Ubud, Bali, Indonesia\nrizky-portfolio.pages.dev | github.com/rizky-rahmad | linkedin.com/in/rahmad-rizki/"
+  },
+  {
+    "id": "barakah-qurban",
+    "title": "Barakah Qurban",
+    "text": "Barakah Qurban. barakah-qurban.vercel.app. Next.js, React 19, TypeScript, Tailwind CSS v4, Radix UI. Responsive landing page for a Qurban cattle provider, with reveal-on-scroll animations and a glassmorphism design. Rizki’s specific contribution to this project is not specified in the approved information."
+  }
+]

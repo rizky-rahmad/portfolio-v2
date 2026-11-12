@@ -11,20 +11,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
-  description: 'Full Stack Software Engineer shipping AI products to production: an omnichannel AI agent for customer conversations and bookings, an HR platform and a multi-brand website builder. Next.js, React Native, Node.js, PostgreSQL.',
-  keywords: ['Full Stack Developer', 'React', 'Next.js', 'Node.js', 'AI', 'Web Developer', 'Indonesia'],
+  title: 'Rahmad Rizki | Full Stack Developer | Software Engineer | Forward Deployed Engineer',
+  description: 'Full Stack Developer building web, mobile, and AI applications. Interested in Full Stack Developer, Software Engineer, and Forward Deployed Engineer opportunities.',
+  keywords: ['Full Stack Developer', 'Software Engineer', 'Forward Deployed Engineer', 'React', 'Next.js', 'Node.js', 'AI', 'Indonesia'],
   authors: [{ name: 'Rahmad Rizki' }],
   creator: 'Rahmad Rizki',
   openGraph: {
-    title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
-    description: 'Full Stack Software Engineer shipping AI products to production. Next.js, React Native, Node.js, PostgreSQL.',
+    title: 'Rahmad Rizki | Full Stack Developer | Software Engineer | Forward Deployed Engineer',
+    description: 'Full Stack Developer building web, mobile, and AI applications. Interested in Full Stack Developer, Software Engineer, and Forward Deployed Engineer opportunities.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rahmad Rizki | Full Stack Software Engineer · AI in Production',
-    description: 'Full Stack Software Engineer shipping AI products to production. Next.js, React Native, Node.js, PostgreSQL.',
+    title: 'Rahmad Rizki | Full Stack Developer | Software Engineer | Forward Deployed Engineer',
+    description: 'Full Stack Developer building web, mobile, and AI applications. Interested in Full Stack Developer, Software Engineer, and Forward Deployed Engineer opportunities.',
   },
 }
 

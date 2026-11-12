@@ -6,26 +6,12 @@ import { useRef } from "react"
 import { MapPin, Phone, Mail, Calendar, Code2, Cpu, Database, Cloud } from "lucide-react"
 
 const skills = [
-  {
-    category: "Frontend & Mobile",
-    icon: Code2,
-    items: ["TypeScript", "React", "Next.js", "Tailwind CSS", "Vite", "React Native", "Expo"],
-  },
-  {
-    category: "Backend & Data",
-    icon: Database,
-    items: ["Node.js", "Hono", "Express", "NestJS", "Socket.IO", "BullMQ", "PostgreSQL", "Drizzle", "Prisma", "Redis"],
-  },
-  {
-    category: "AI",
-    icon: Cpu,
-    items: ["Mastra Agents", "OpenRouter", "Gemini", "OpenAI Whisper", "RAG", "LiveKit Voice", "Claude Code"],
-  },
-  {
-    category: "DevOps & Testing",
-    icon: Cloud,
-    items: ["Docker", "Coolify", "Cloudflare", "Vercel", "GitHub Actions", "Vitest", "Playwright"],
-  },
+  { category: "Product Delivery", icon: Code2, items: ["Requirements clarification", "user flows", "AI-assisted development with Claude Code", "functional testing", "release preparation"] },
+  { category: "AI Applications", icon: Cpu, items: ["LLM integration", "semantic search and embeddings", "retrieval-augmented generation (RAG)", "prompt design", "tool calling", "guardrails", "human handoff", "voice agents", "Mastra", "Gemini", "OpenRouter", "OpenAI Whisper", "LiveKit"] },
+  { category: "Web & Mobile", icon: Code2, items: ["JavaScript (ES6+)", "TypeScript", "HTML5", "CSS3", "React", "Next.js", "Tailwind CSS", "Vite", "React Native", "Expo", "responsive design", "over-the-air updates"] },
+  { category: "Back-End & Data", icon: Database, items: ["Node.js", "Hono", "Express", "NestJS", "REST APIs", "webhooks", "Socket.IO", "BullMQ", "PostgreSQL", "Drizzle ORM", "Prisma", "Redis", "Supabase", "JWT", "OAuth 2.0", "role-based access control"] },
+  { category: "Deployment & Testing", icon: Cloud, items: ["Docker", "Coolify", "Cloudflare", "Vercel", "GitHub Actions", "Git", "Vitest", "Playwright", "AI-assisted test creation and execution"] },
+  { category: "Design", icon: Code2, items: ["UI/UX fundamentals", "Figma", "Adobe Photoshop", "Adobe Illustrator"] },
 ]
 
 const bioInfo = [
@@ -83,10 +69,10 @@ export function About() {
             About Me
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold text-foreground text-balance">
-            Crafting Digital Experiences
+            Professional Summary
           </h2>
           <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
-            Result-oriented Full Stack Developer with a passion for building robust web solutions and integrating AI to optimize workflows.
+            Web, mobile, and AI applications for business workflows.
           </p>
         </m.div>
 
@@ -102,10 +88,7 @@ export function About() {
                 Professional Summary
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                I am a Full Stack Developer at <span className="text-foreground font-medium">PT Unicorn</span>, a growing multi-brand company, where I work in a small product team that ships what the business runs on every day: an AI agent that handles customer conversations and bookings across <span className="text-foreground font-medium">WhatsApp, Instagram, Email and TikTok</span>, an HR platform used by 154 employees, and a multi-brand website builder. I work close to the people who use what I build, and take features from first conversation to production. I work across the whole stack with <span className="text-foreground font-medium">Next.js, React Native, Node.js and PostgreSQL</span>.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mb-8">
-                I put language models into production with <span className="text-foreground font-medium">guardrails, human handoff and measured results</span>, and use Claude Code daily to move faster while checking every change with tests and production data. <span className="text-foreground font-medium">Microsoft Certified: Azure AI Fundamentals</span>.
+                Full Stack Developer building web, mobile, and AI applications for business workflows. Works with users and stakeholders to define product flows, guide AI-assisted implementation with Claude Code, test solutions, and support releases. Experience includes messaging, booking, HR workflows, and website building. Interested in full-time and international remote opportunities, including forward deployed engineering.
               </p>
 
               {/* Bio Info Grid */}

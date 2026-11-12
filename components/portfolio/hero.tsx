@@ -69,16 +69,6 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-6 animate-fade-up" style={{ animationDelay: "0.1s" }}>
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            Available for new opportunities
-          </span>
-        </div>
-
         <h1
           className="animate-rise text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
         >
@@ -88,10 +78,10 @@ export function Hero() {
 
         {/* Measured as the LCP element on mobile: no opacity fade, no delay. */}
         <p
-          className="animate-rise mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+          className="animate-rise mt-6 text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-5xl mx-auto text-pretty"
         >
-          <span className="text-foreground font-medium">Full Stack Software Engineer</span> · <span className="text-foreground font-medium whitespace-nowrap">AI in Production</span>
-          <span className="block mt-1 text-base sm:text-lg md:text-xl">I ship AI products that real teams run on every day</span>
+          <span className="text-foreground font-medium">Full Stack Developer | Software Engineer | Forward Deployed Engineer</span>
+          <span className="block mt-2 text-base sm:text-lg md:text-xl">Web, Mobile &amp; AI Applications for Business Workflows</span>
         </p>
 
         {/* CTA Buttons */}
@@ -124,14 +114,15 @@ export function Hero() {
             Get In Touch
           </m.a>
           <m.a
-            href="https://drive.google.com/uc?export=download&id=13pYhOAiU5Cz-0i3O_4n8BBDVfDRmgxRl"
-            download
+            href="https://drive.google.com/file/d/1eJC581O-3jCJcRirbylo5mdYUhYFhA7a/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-secondary-foreground rounded-xl font-semibold text-lg hover:bg-secondary/80 transition-all border border-border"
           >
             <Download className="w-5 h-5" aria-hidden="true" />
-            Download Resume
+            View Resume
           </m.a>
         </div>
 
@@ -142,7 +133,7 @@ export function Hero() {
         >
           {[
             { icon: Github, href: "https://github.com/rizky-rahmad", label: "GitHub" },
-            { icon: Linkedin, href: "https://linkedin.com/in/rahmad-rizki-1728a6186", label: "LinkedIn" },
+            { icon: Linkedin, href: "https://www.linkedin.com/in/rahmad-rizki/", label: "LinkedIn" },
             { icon: Mail, href: "mailto:rizky.business7@gmail.com", label: "Email" },
           ].map((social) => (
             <m.a
